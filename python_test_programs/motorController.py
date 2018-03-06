@@ -4,14 +4,12 @@ import time
 import os
 #PWM.start(channel, duty, freq=2000, polarity=0)
 M1_PWM_PIN = "P9_14"
-M2_PWM_PIN = "P9_16"
 M1_DIRECTION_PIN = "P9_13"
-M2_DIRECTION_PIN = "P9_15"
 duty = 0
 freq = 10000
 direction = True
-PWM.start(PWM_PIN_1, duty, freq)
-GPIO.setup(GPIO_PIN_1, GPIO.OUT)
+PWM.start(M1_PWM_PIN, duty, freq)
+GPIO.setup(M1_DIRECTION_PIN, GPIO.OUT)
 os.system('clear')
 while 1:
     print("Duty Cycle: " +  str(duty))
@@ -29,15 +27,15 @@ while 1:
     elif cmd == 'i':
 	direction = not direction
     os.system('clear')
-    if duty >= 0 and duty <= 100 and freq >= 1:
-        PWM.set_duty_cycle(PWM_PIN_1, duty)
-	PWM.set_frequency(PWM_PIN_1, freq)
+    if duty >= 0 and duty <= 100 and freq >= 1 :
+        PWM.set_duty_cycle(M1_PWM_PIN, duty)
+	PWM.set_frequency(M1_PWM_PIN, freq)
 	if direction :
-	    GPIO.output(GPIO_PIN_1, GPIO.HIGH)
+	    GPIO.output(M1_DIRECTION_PIN, GPIO.HIGH)
 	else :
-	    GPIO.output(GPIO_PIN_1, GPIO.LOW)
+	    GPIO.output(M1_DIRECTION_PIN, GPIO.LOW)
     else :
 	print("Non-legal value given.")
 	print
 GPIO.cleanup()
-PWM.stop(PWM_PIN_1)
+PWM.stop(M1_PWM_PIN)
