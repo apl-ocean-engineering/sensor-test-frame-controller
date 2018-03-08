@@ -1,0 +1,53 @@
+// Copyright 2018 UW-APL
+//  Protobuf description for message between frame_controller client and server
+
+syntax = "proto3";
+
+package frame_controller;
+
+enum MotorEnum {
+  NOMOTOR = 0;
+  CONT1_MOTOR1 = 1;
+  CONT1_MOTOR2 = 2;
+  CONT2_MOTOR1 = 4;
+  CONT2_MOTOR2 = 8;
+}
+
+// The greeting service definition.
+service FrameController {
+  //
+  rpc StopAll( StopAllRequest ) returns (Status) {}
+
+  // Stop on
+  rpc StopMotor( StopMotorRequest ) returns (Status) {}
+
+  //
+  rpc SetMotorVelocity( SetVelocityRequest ) returns (Status) {}
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings
+message HelloReply {
+  string message = 1;
+}
+
+message StopAllRequest {}
+
+message StopMotorRequest {
+  fixed32 motors = 1;
+}
+
+message SetVelocityRequest {
+  fixed32 motors = 1;
+  fixed32 duty_cycles = 2;
+  float duration_sec = 3;
+}
+
+// To be determined
+message Status {
+
+}

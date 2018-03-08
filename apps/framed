@@ -1,0 +1,12 @@
+#!/usr/bin/env python
+
+# Copyright 2018 UW-APL
+# See LICENSE
+
+"""The Python implementation of the GRPC frame.Controller server."""
+
+import server from frame_controller
+
+
+if __name__ == '__main__':
+    server.serve()
