@@ -5,8 +5,13 @@
 
 """The Python implementation of the GRPC frame.Controller server."""
 
-import server from frame_controller
+from frame_controller import server
 
+# Configurathe logger used within the frame_controller library
+import logging
+logger = logging.getLogger('frame_controller')
+logger.setLevel(logging.INFO)
+logger.addHandler(logging.StreamHandler())
 
 if __name__ == '__main__':
     server.serve()

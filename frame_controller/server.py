@@ -10,23 +10,31 @@ import time
 
 import grpc
 
-import frame_controller_pb2
-import frame_controller_grpc
+import logging
+
+import frame_controller_pb2 as frame_api
+import frame_controller_pb2_grpc as frame_grpc
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
 
-class Greeter(helloworld_pb2_grpc.GreeterServicer):
+class FrameController(frame_grpc.FrameControllerServicer):
 
-    def SayHello(self, request, context):
-        return helloworld_pb2.HelloReply(message='Hello, %s!' % request.name)
+    def __init__(self, logger=None):
+        self.logger = logger or logging.getLogger(__name__)
 
+    def StopAll(self, request, context):
+        self.logger.warn("Stopping all motors!!")
+        return frame_api.Status()
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    helloworld_pb2_grpc.add_GreeterServicer_to_server(Greeter(), server)
+    frame_grpc.add_FrameControllerServicer_to_server(FrameController(), server)
+
     server.add_insecure_port('[::]:50051')
     server.start()
+
+    logging.getLogger(__name__).info("Started server.")
 
     try:
         while True:
