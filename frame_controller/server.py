@@ -5,15 +5,20 @@
 
 """The Python implementation of the GRPC frame.Controller server."""
 
+from __future__ import absolute_import
+
 from concurrent import futures
 import time
 
 import grpc
 
-import logging
+import frame_controller.frame_controller_pb2 as frame_api
+import frame_controller.frame_controller_pb2_grpc as frame_grpc
 
-import frame_controller_pb2 as frame_api
-import frame_controller_pb2_grpc as frame_grpc
+
+import logging
+# This is apparently best practice...
+logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
