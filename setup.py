@@ -13,5 +13,5 @@ setup(
     extras_require={
         'dev': ['grpcio_tools']
     },
-    scripts=['apps/framed', 'apps/framec']                  # The name of your scipt, and also the command you'll be using for calling it
+    scripts=['apps/frame_server', 'apps/frame_client']                  # The name of your scipt, and also the command you'll be using for calling it
 )
