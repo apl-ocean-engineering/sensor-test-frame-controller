@@ -17,7 +17,8 @@ import frame_controller.frame_controller_pb2_grpc as frame_grpc
 
 
 import logging
-# This is apparently best practice...
+# This is apparently best practice...  define a null logger for myself
+# then let the _user_ of the library replace it with a more useful logger
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24

@@ -6,44 +6,37 @@ syntax = "proto3";
 package frame_controller;
 
 enum MotorEnum {
-  NOMOTOR = 0;
+  NO_MOTOR = 0;
   CONT1_MOTOR1 = 1;
   CONT1_MOTOR2 = 2;
   CONT2_MOTOR1 = 4;
   CONT2_MOTOR2 = 8;
 }
 
-// The greeting service definition.
+// The FrameController service definition.
 service FrameController {
-  //
+  // Stop all motors!
   rpc StopAll( StopAllRequest ) returns (Status) {}
 
-  // Stop on
+  // Stop some motors
   rpc StopMotor( StopMotorRequest ) returns (Status) {}
 
   //
   rpc SetMotorVelocity( SetVelocityRequest ) returns (Status) {}
 }
 
-// The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
-}
-
-// The response message containing the greetings
-message HelloReply {
-  string message = 1;
-}
-
+// Request to stop all motors
 message StopAllRequest {}
 
+// Request to stop some motors.  Motors encoded in the _motors_ bitfield
 message StopMotorRequest {
   fixed32 motors = 1;
 }
 
+// Request to set a velocity command for some motors.
 message SetVelocityRequest {
   fixed32 motors = 1;
-  fixed32 duty_cycles = 2;
+  fixed32 duty_cycle = 2;
   float duration_sec = 3;
 }
 

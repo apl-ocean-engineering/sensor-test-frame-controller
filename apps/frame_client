@@ -20,7 +20,7 @@ def run():
     print("Sending stop all")
     response = stub.StopAll(frame_api.StopAllRequest())
 
-    print("Got: %s" % response)
+    print("Got this response: %s" % response)
 
 
 if __name__ == '__main__':
