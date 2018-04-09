@@ -60,8 +60,8 @@ If you change the gRPC prototype defined in `frame_controller/frame_controller.p
 
 In one window, run:
 
-   python apps/frame_server
+    python apps/frame_server
 
 In another window:
 
-  python apps/frame_client
+    python apps/frame_client
