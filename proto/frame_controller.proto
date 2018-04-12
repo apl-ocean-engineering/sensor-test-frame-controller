@@ -1,0 +1,46 @@
+// Copyright 2018 UW-APL
+//  Protobuf description for message between frame_controller client and server
+
+syntax = "proto3";
+
+package frame_controller;
+
+enum MotorEnum {
+  NO_MOTOR = 0;
+  CONT1_MOTOR1 = 1;
+  CONT1_MOTOR2 = 2;
+  CONT2_MOTOR1 = 4;
+  CONT2_MOTOR2 = 8;
+}
+
+// The FrameController service definition.
+service FrameController {
+  // Stop all motors!
+  rpc StopAll( StopAllRequest ) returns (Status) {}
+
+  // Stop some motors
+  rpc StopMotor( StopMotorRequest ) returns (Status) {}
+
+  //
+  rpc SetMotorVelocity( SetVelocityRequest ) returns (Status) {}
+}
+
+// Request to stop all motors
+message StopAllRequest {}
+
+// Request to stop some motors.  Motors encoded in the _motors_ bitfield
+message StopMotorRequest {
+  fixed32 motors = 1;
+}
+
+// Request to set a velocity command for some motors.
+message SetVelocityRequest {
+  fixed32 motors = 1;
+  fixed32 duty_cycle = 2;
+  float duration_sec = 3;
+}
+
+// To be determined
+message Status {
+
+}

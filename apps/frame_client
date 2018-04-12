@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+
+# Copyright 2018 UW-APL
+# See LICENSE
+
+"""The Python implementation of the GRPC frame.Controller client."""
+
+from __future__ import print_function
+
+import grpc
+
+import frame_controller.frame_controller_pb2 as frame_api
+import frame_controller.frame_controller_pb2_grpc as frame_grpc
+
+
+def run():
+    channel = grpc.insecure_channel('localhost:50051')
+    stub = frame_grpc.FrameControllerStub(channel)
+
+    print("Sending stop all")
+    response = stub.StopAll(frame_api.StopAllRequest())
+
+    print("Got this response: %s" % response)
+
+
+if __name__ == '__main__':
+    run()

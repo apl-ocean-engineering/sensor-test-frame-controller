@@ -41,3 +41,27 @@ On Python 3:
 Hooray [this](https://learn.adafruit.com/blinking-an-led-with-beaglebone-black/the-python-console) works!
 
 ![](images/led.gif)
+
+
+## Installing this package
+
+    pip install --user -e .
+
+To automatically install the development dependencies
+
+    pip install --user -e .[dev]
+
+If you change the gRPC prototype defined in `frame_controller/frame_controller.proto`, you must install the development dependencies about, then run `make proto` to rebuild the protobuf definitions.
+
+
+## Rnuning the package
+
+`apps/frame_server` is the entrypoint for the frame server.
+
+In one window, run:
+
+    python apps/frame_server
+
+In another window:
+
+    python apps/frame_client
