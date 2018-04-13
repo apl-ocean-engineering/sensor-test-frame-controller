@@ -20,18 +20,26 @@ while 1:
     print("Single Axis Rotation Actuator")
     print("PWM Frequency: " + str(freq))
     print("---------------------------------------------------------")
-    direction = raw_input("Enter Direction (+/-) or e(x)it: ")
+    direction = raw_input("Enter Direction (+/-) or (c)lear or e(x)it: ")
     if direction == 'x':
 	break
-    speed = raw_input("Enter % Speed of Motion (0-100) or e(x)it: ")
+    if direction == 'c':
+        os.system('clear')
+        continue
+    speed = raw_input("Enter % Speed of Motion (0-100) or (c)lear or e(x)it: ")
     if speed == 'x':
         break
-    duration = raw_input("Enter Duration of Movement in seconds or e(x)it: ")
+    if speed == 'c':
+        os.system('clear')
+        continue
+    duration = raw_input("Enter Con(t)inuous Movement or Duration in seconds or (c)lear or e(x)it: ")
     if duration == 'x':
         break
-    os.system('clear')
-    if int(speed) >= 0 and int(speed) <= 100 and int(duration) >= 0 and (direction == '+' or direction == '-'):
-        confirmation = raw_input("Execute Rotation in " + str(direction) + " Direction at " + str(speed) + "% Speed for " + str(duration) + " seconds? (y/n)")
+    if duration == 'c':
+        os.system('clear')
+        continue
+    if int(speed) >= 0 and int(speed) <= 100 and (duration == 't' or float(duration) >= 0) and (direction == '+' or direction == '-'):
+        confirmation = raw_input("Execute Rotation in " + str(direction) + " Direction at " + str(speed) + "% Speed for " + str(duration) + " seconds? (y/n) ")
         if confirmation == 'y' :
             PWM.set_duty_cycle(M1_PWM_PIN, float(speed))
             PWM.set_duty_cycle(M2_PWM_PIN, float(speed))
@@ -42,12 +50,16 @@ while 1:
                 GPIO.output(M1_DIRECTION_PIN, GPIO.LOW)
                 GPIO.output(M2_DIRECTION_PIN, GPIO.HIGH)
             print("Executing...")
-            time.sleep(float(duration))
+            if duration == 't' :
+                stop = raw_input("Enter (x) to Stop Motion: ")
+            else :
+                time.sleep(float(duration))
+                print("Done in " + str(duration) + " seconds.")
             PWM.set_duty_cycle(M1_PWM_PIN, 0.0)
             PWM.set_duty_cycle(M2_PWM_PIN, 0.0)
     else :
 	print("Non-legal value(s) given.")
-        print
+    print
 GPIO.cleanup()
 PWM.stop(M1_PWM_PIN)
 PWM.stop(M2_PWM_PIN)
