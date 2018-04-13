@@ -20,9 +20,32 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='frame_controller.proto',
   package='frame_controller',
   syntax='proto3',
-  serialized_pb=_b('\n\x16\x66rame_controller.proto\x12\x10\x66rame_controller\"\x1c\n\x0cHelloRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"\x1d\n\nHelloReply\x12\x0f\n\x07message\x18\x01 \x01(\t\"\x10\n\x0eStopAllRequest\"\"\n\x10StopMotorRequest\x12\x0e\n\x06motors\x18\x01 \x01(\x07\"O\n\x12SetVelocityRequest\x12\x0e\n\x06motors\x18\x01 \x01(\x07\x12\x13\n\x0b\x64uty_cycles\x18\x02 \x01(\x07\x12\x14\n\x0c\x64uration_sec\x18\x03 \x01(\x02\"\x08\n\x06Status*`\n\tMotorEnum\x12\x0b\n\x07NOMOTOR\x10\x00\x12\x10\n\x0c\x43ONT1_MOTOR1\x10\x01\x12\x10\n\x0c\x43ONT1_MOTOR2\x10\x02\x12\x10\n\x0c\x43ONT2_MOTOR1\x10\x04\x12\x10\n\x0c\x43ONT2_MOTOR2\x10\x08\x32\xfd\x01\n\x0f\x46rameController\x12G\n\x07StopAll\x12 .frame_controller.StopAllRequest\x1a\x18.frame_controller.Status\"\x00\x12K\n\tStopMotor\x12\".frame_controller.StopMotorRequest\x1a\x18.frame_controller.Status\"\x00\x12T\n\x10SetMotorVelocity\x12$.frame_controller.SetVelocityRequest\x1a\x18.frame_controller.Status\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x16\x66rame_controller.proto\x12\x10\x66rame_controller\"\x10\n\x0eStopAllRequest\"\"\n\x10StopMotorRequest\x12\x0e\n\x06motors\x18\x01 \x01(\x07\"N\n\x12SetVelocityRequest\x12\x0e\n\x06motors\x18\x01 \x01(\x07\x12\x12\n\nduty_cycle\x18\x02 \x01(\x02\x12\x14\n\x0c\x64uration_sec\x18\x03 \x01(\x02\"\x08\n\x06Status*7\n\rMotorBitshift\x12\x12\n\x0e\x43ONT1_BITSHIFT\x10\x00\x12\x12\n\x0e\x43ONT2_BITSHIFT\x10\x03*\xa1\x01\n\tMotorEnum\x12\x0c\n\x08NO_MOTOR\x10\x00\x12\x10\n\x0c\x43ONT1_MOTOR1\x10\x01\x12\x10\n\x0c\x43ONT1_MOTOR2\x10\x02\x12\x0e\n\nCONT1_BOTH\x10\x04\x12\x0e\n\nCONT1_MASK\x10\x07\x12\x10\n\x0c\x43ONT2_MOTOR1\x10\x08\x12\x10\n\x0c\x43ONT2_MOTOR2\x10\x10\x12\x0e\n\nCONT2_BOTH\x10 \x12\x0e\n\nCONT2_MASK\x10?2\xf8\x01\n\x0f\x46rameController\x12G\n\x07StopAll\x12 .frame_controller.StopAllRequest\x1a\x18.frame_controller.Status\"\x00\x12K\n\tStopMotor\x12\".frame_controller.StopMotorRequest\x1a\x18.frame_controller.Status\"\x00\x12O\n\x0bSetVelocity\x12$.frame_controller.SetVelocityRequest\x1a\x18.frame_controller.Status\"\x00\x62\x06proto3')
 )
 
+_MOTORBITSHIFT = _descriptor.EnumDescriptor(
+  name='MotorBitshift',
+  full_name='frame_controller.MotorBitshift',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='CONT1_BITSHIFT', index=0, number=0,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CONT2_BITSHIFT', index=1, number=3,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=188,
+  serialized_end=243,
+)
+_sym_db.RegisterEnumDescriptor(_MOTORBITSHIFT)
+
+MotorBitshift = enum_type_wrapper.EnumTypeWrapper(_MOTORBITSHIFT)
 _MOTORENUM = _descriptor.EnumDescriptor(
   name='MotorEnum',
   full_name='frame_controller.MotorEnum',
@@ -30,7 +53,7 @@ _MOTORENUM = _descriptor.EnumDescriptor(
   file=DESCRIPTOR,
   values=[
     _descriptor.EnumValueDescriptor(
-      name='NOMOTOR', index=0, number=0,
+      name='NO_MOTOR', index=0, number=0,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
@@ -42,90 +65,50 @@ _MOTORENUM = _descriptor.EnumDescriptor(
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CONT2_MOTOR1', index=3, number=4,
+      name='CONT1_BOTH', index=3, number=4,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CONT2_MOTOR2', index=4, number=8,
+      name='CONT1_MASK', index=4, number=7,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CONT2_MOTOR1', index=5, number=8,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CONT2_MOTOR2', index=6, number=16,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CONT2_BOTH', index=7, number=32,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CONT2_MASK', index=8, number=63,
       options=None,
       type=None),
   ],
   containing_type=None,
   options=None,
-  serialized_start=250,
-  serialized_end=346,
+  serialized_start=246,
+  serialized_end=407,
 )
 _sym_db.RegisterEnumDescriptor(_MOTORENUM)
 
 MotorEnum = enum_type_wrapper.EnumTypeWrapper(_MOTORENUM)
-NOMOTOR = 0
+CONT1_BITSHIFT = 0
+CONT2_BITSHIFT = 3
+NO_MOTOR = 0
 CONT1_MOTOR1 = 1
 CONT1_MOTOR2 = 2
-CONT2_MOTOR1 = 4
-CONT2_MOTOR2 = 8
+CONT1_BOTH = 4
+CONT1_MASK = 7
+CONT2_MOTOR1 = 8
+CONT2_MOTOR2 = 16
+CONT2_BOTH = 32
+CONT2_MASK = 63
 
-
-
-_HELLOREQUEST = _descriptor.Descriptor(
-  name='HelloRequest',
-  full_name='frame_controller.HelloRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='name', full_name='frame_controller.HelloRequest.name', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=44,
-  serialized_end=72,
-)
-
-
-_HELLOREPLY = _descriptor.Descriptor(
-  name='HelloReply',
-  full_name='frame_controller.HelloReply',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='message', full_name='frame_controller.HelloReply.message', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=74,
-  serialized_end=103,
-)
 
 
 _STOPALLREQUEST = _descriptor.Descriptor(
@@ -147,8 +130,8 @@ _STOPALLREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=105,
-  serialized_end=121,
+  serialized_start=44,
+  serialized_end=60,
 )
 
 
@@ -178,8 +161,8 @@ _STOPMOTORREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=123,
-  serialized_end=157,
+  serialized_start=62,
+  serialized_end=96,
 )
 
 
@@ -198,9 +181,9 @@ _SETVELOCITYREQUEST = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='duty_cycles', full_name='frame_controller.SetVelocityRequest.duty_cycles', index=1,
-      number=2, type=7, cpp_type=3, label=1,
-      has_default_value=False, default_value=0,
+      name='duty_cycle', full_name='frame_controller.SetVelocityRequest.duty_cycle', index=1,
+      number=2, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
@@ -223,8 +206,8 @@ _SETVELOCITYREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=159,
-  serialized_end=238,
+  serialized_start=98,
+  serialized_end=176,
 )
 
 
@@ -247,32 +230,17 @@ _STATUS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=240,
-  serialized_end=248,
+  serialized_start=178,
+  serialized_end=186,
 )
 
-DESCRIPTOR.message_types_by_name['HelloRequest'] = _HELLOREQUEST
-DESCRIPTOR.message_types_by_name['HelloReply'] = _HELLOREPLY
 DESCRIPTOR.message_types_by_name['StopAllRequest'] = _STOPALLREQUEST
 DESCRIPTOR.message_types_by_name['StopMotorRequest'] = _STOPMOTORREQUEST
 DESCRIPTOR.message_types_by_name['SetVelocityRequest'] = _SETVELOCITYREQUEST
 DESCRIPTOR.message_types_by_name['Status'] = _STATUS
+DESCRIPTOR.enum_types_by_name['MotorBitshift'] = _MOTORBITSHIFT
 DESCRIPTOR.enum_types_by_name['MotorEnum'] = _MOTORENUM
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
-
-HelloRequest = _reflection.GeneratedProtocolMessageType('HelloRequest', (_message.Message,), dict(
-  DESCRIPTOR = _HELLOREQUEST,
-  __module__ = 'frame_controller_pb2'
-  # @@protoc_insertion_point(class_scope:frame_controller.HelloRequest)
-  ))
-_sym_db.RegisterMessage(HelloRequest)
-
-HelloReply = _reflection.GeneratedProtocolMessageType('HelloReply', (_message.Message,), dict(
-  DESCRIPTOR = _HELLOREPLY,
-  __module__ = 'frame_controller_pb2'
-  # @@protoc_insertion_point(class_scope:frame_controller.HelloReply)
-  ))
-_sym_db.RegisterMessage(HelloReply)
 
 StopAllRequest = _reflection.GeneratedProtocolMessageType('StopAllRequest', (_message.Message,), dict(
   DESCRIPTOR = _STOPALLREQUEST,
@@ -310,8 +278,8 @@ _FRAMECONTROLLER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=349,
-  serialized_end=602,
+  serialized_start=410,
+  serialized_end=658,
   methods=[
   _descriptor.MethodDescriptor(
     name='StopAll',
@@ -332,8 +300,8 @@ _FRAMECONTROLLER = _descriptor.ServiceDescriptor(
     options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='SetMotorVelocity',
-    full_name='frame_controller.FrameController.SetMotorVelocity',
+    name='SetVelocity',
+    full_name='frame_controller.FrameController.SetVelocity',
     index=2,
     containing_service=None,
     input_type=_SETVELOCITYREQUEST,

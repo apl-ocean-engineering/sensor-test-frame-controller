@@ -8,6 +8,7 @@
 from __future__ import print_function
 
 import grpc
+import time
 
 import frame_controller.frame_controller_pb2 as frame_api
 import frame_controller.frame_controller_pb2_grpc as frame_grpc
@@ -17,9 +18,24 @@ def run():
     channel = grpc.insecure_channel('localhost:50051')
     stub = frame_grpc.FrameControllerStub(channel)
 
+
+    print("Sending motor velocity")
+    request = frame_api.SetVelocityRequest()
+    request.motors = frame_api.CONT1_BOTH
+    request.duty_cycle = 0.5
+
+    response = stub.SetVelocity(request)
+    print("Got this response: %s" % response)
+
+    request.motors = frame_api.CONT2_MOTOR1
+    request.duty_cycle = -0.75
+    response = stub.SetVelocity(request)
+    print("Got this response: %s" % response)
+
+    time.sleep(2)
+
     print("Sending stop all")
     response = stub.StopAll(frame_api.StopAllRequest())
-
     print("Got this response: %s" % response)
 
 
