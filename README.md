@@ -54,13 +54,13 @@ To automatically install the development dependencies
 If you change the gRPC prototype defined in `frame_controller/frame_controller.proto`, you must install the development dependencies about, then run `make proto` to rebuild the protobuf definitions.
 
 
-## Rnuning the package
+## Rnuning the package NOT on a Beaglebone Black
 
 `apps/frame_server` is the entrypoint for the frame server.
 
 In one window, run:
 
-    python apps/frame_server
+    python apps/frame_server --fake-hardware
 
 In another window:
 

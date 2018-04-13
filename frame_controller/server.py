@@ -13,8 +13,8 @@ from datetime import datetime
 
 import grpc
 
-import .frame_controller_pb2 as frame_api
-import .frame_controller_pb2_grpc as frame_grpc
+import frame_controller.frame_controller_pb2 as frame_api
+import frame_controller.frame_controller_pb2_grpc as frame_grpc
 
 from .fake_pwm import FakePwm
 
