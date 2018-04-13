@@ -17,6 +17,7 @@ import frame_controller.frame_controller_pb2 as frame_api
 import frame_controller.frame_controller_pb2_grpc as frame_grpc
 
 from .fake_pwm import FakePwm
+from .real_pwm import RealPwm
 
 import logging
 # This is apparently best practice...  define a null logger for myself
@@ -37,6 +38,8 @@ class FrameController(frame_grpc.FrameControllerServicer):
         else:
             ## Use real hardware
             self.logger.warn("Using real hardware")
+            self.pitch = RealPwm("Pitch",self.logger)
+            self.roll  = RealPwm("Roll",self.logger)
 
     def cleanup(self):
         self.pitch.stop()
