@@ -7,20 +7,18 @@ package frame_controller;
 
 enum MotorBitshift {
   CONT1_BITSHIFT = 0;
-  CONT2_BITSHIFT = 3;
+  CONT2_BITSHIFT = 2;
 }
 
 enum MotorEnum {
   NO_MOTOR = 0;
   CONT1_MOTOR1 = 1;
   CONT1_MOTOR2 = 2;
-  CONT1_BOTH   = 4;
-  CONT1_MASK   = 7;
+  CONT1_BOTH   = 3;
 
-  CONT2_MOTOR1 = 8;
-  CONT2_MOTOR2 = 16;
-  CONT2_BOTH   = 32;
-  CONT2_MASK   = 63;
+  CONT2_MOTOR1 = 4;
+  CONT2_MOTOR2 = 8;
+  CONT2_BOTH   = 12;
 }
 
 // The FrameController service definition.
