@@ -3,7 +3,7 @@ import logging
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
-# One instance of RealPWM handles the two motors running a single axis
+# One instance of RealPWM handles the two motors running a single axis (pitch or yaw)
 class RealPwm:
 
     def __init__(self, name, logger=None):
@@ -25,7 +25,7 @@ class RealPwm:
             self.pwm2 = M4_PWM_PIN
 
         else:
-            self.logger.error("Configured with unknown axis \"%s\"" % axis)
+            self.logger.error("Trying to configure with unknown axis \"%s\"" % axis)
 
     @property
     def logname(self):
@@ -33,8 +33,8 @@ class RealPwm:
 
     def start(self):
         self.logger.info("%s: Starting" % self.logname)
-        freq = 10000
 
+        freq = 10000
         PWM.start(self.pwm1, 0, freq)
         PWM.start(self.pwm2, 0, freq)
         GPIO.setup(self.dir1, GPIO.OUT)
@@ -42,6 +42,7 @@ class RealPwm:
 
     def stop(self):
         self.logger.info("%s: Stopping" % self.logname)
+
         PWM.stop(self.pwm1)
         PWM.stop(self.pwm2)
         GPIO.cleanup()
