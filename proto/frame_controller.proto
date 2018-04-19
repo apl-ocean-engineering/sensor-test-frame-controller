@@ -5,12 +5,22 @@ syntax = "proto3";
 
 package frame_controller;
 
+enum MotorBitshift {
+  CONT1_BITSHIFT = 0;
+  CONT2_BITSHIFT = 3;
+}
+
 enum MotorEnum {
   NO_MOTOR = 0;
   CONT1_MOTOR1 = 1;
   CONT1_MOTOR2 = 2;
-  CONT2_MOTOR1 = 4;
-  CONT2_MOTOR2 = 8;
+  CONT1_BOTH   = 4;
+  CONT1_MASK   = 7;
+
+  CONT2_MOTOR1 = 8;
+  CONT2_MOTOR2 = 16;
+  CONT2_BOTH   = 32;
+  CONT2_MASK   = 63;
 }
 
 // The FrameController service definition.
@@ -22,7 +32,7 @@ service FrameController {
   rpc StopMotor( StopMotorRequest ) returns (Status) {}
 
   //
-  rpc SetMotorVelocity( SetVelocityRequest ) returns (Status) {}
+  rpc SetVelocity( SetVelocityRequest ) returns (Status) {}
 }
 
 // Request to stop all motors
@@ -36,7 +46,7 @@ message StopMotorRequest {
 // Request to set a velocity command for some motors.
 message SetVelocityRequest {
   fixed32 motors = 1;
-  fixed32 duty_cycle = 2;
+  float duty_cycle = 2;
   float duration_sec = 3;
 }
 

@@ -5,7 +5,7 @@ import frame_controller.frame_controller_pb2 as frame__controller__pb2
 
 
 class FrameControllerStub(object):
-  """The greeting service definition.
+  """The FrameController service definition.
   """
 
   def __init__(self, channel):
@@ -24,32 +24,32 @@ class FrameControllerStub(object):
         request_serializer=frame__controller__pb2.StopMotorRequest.SerializeToString,
         response_deserializer=frame__controller__pb2.Status.FromString,
         )
-    self.SetMotorVelocity = channel.unary_unary(
-        '/frame_controller.FrameController/SetMotorVelocity',
+    self.SetVelocity = channel.unary_unary(
+        '/frame_controller.FrameController/SetVelocity',
         request_serializer=frame__controller__pb2.SetVelocityRequest.SerializeToString,
         response_deserializer=frame__controller__pb2.Status.FromString,
         )
 
 
 class FrameControllerServicer(object):
-  """The greeting service definition.
+  """The FrameController service definition.
   """
 
   def StopAll(self, request, context):
-    """
+    """Stop all motors!
     """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
   def StopMotor(self, request, context):
-    """Stop on
+    """Stop some motors
     """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def SetMotorVelocity(self, request, context):
+  def SetVelocity(self, request, context):
     """
     """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -69,8 +69,8 @@ def add_FrameControllerServicer_to_server(servicer, server):
           request_deserializer=frame__controller__pb2.StopMotorRequest.FromString,
           response_serializer=frame__controller__pb2.Status.SerializeToString,
       ),
-      'SetMotorVelocity': grpc.unary_unary_rpc_method_handler(
-          servicer.SetMotorVelocity,
+      'SetVelocity': grpc.unary_unary_rpc_method_handler(
+          servicer.SetVelocity,
           request_deserializer=frame__controller__pb2.SetVelocityRequest.FromString,
           response_serializer=frame__controller__pb2.Status.SerializeToString,
       ),

@@ -1,17 +1,28 @@
 #!/usr/bin/env python
-
 # Copyright 2018 UW-APL
 # See LICENSE
 
-"""The Python implementation of the GRPC frame.Controller server."""
+# Launch the FrameController server
 
 from frame_controller import server
+import argparse
 
-# Configure the logger built into the frame_controller library
 import logging
-logger = logging.getLogger('frame_controller')
-logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler())
+
+def run():
+    parser = argparse.ArgumentParser(description='FrameController server.')
+
+    parser.add_argument('--fake-hardware', dest='fakehw', action='store_true',
+                        help='Use fake PWM hardware')
+
+    args = parser.parse_args()
+
+    # Configure the logger built into the frame_controller library
+    logger = logging.getLogger('frame_controller')
+    logger.setLevel(logging.INFO)
+    logger.addHandler(logging.StreamHandler())
+
+    server.serve(args.fakehw)
 
 if __name__ == '__main__':
-    server.serve()
+    run()
