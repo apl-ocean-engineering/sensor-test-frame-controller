@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='frame_controller.proto',
   package='frame_controller',
   syntax='proto3',
-  serialized_pb=_b('\n\x16\x66rame_controller.proto\x12\x10\x66rame_controller\"\x10\n\x0eStopAllRequest\"\"\n\x10StopMotorRequest\x12\x0e\n\x06motors\x18\x01 \x01(\x07\"N\n\x12SetVelocityRequest\x12\x0e\n\x06motors\x18\x01 \x01(\x07\x12\x12\n\nduty_cycle\x18\x02 \x01(\x02\x12\x14\n\x0c\x64uration_sec\x18\x03 \x01(\x02\"\x08\n\x06Status*7\n\rMotorBitshift\x12\x12\n\x0e\x43ONT1_BITSHIFT\x10\x00\x12\x12\n\x0e\x43ONT2_BITSHIFT\x10\x03*\xa1\x01\n\tMotorEnum\x12\x0c\n\x08NO_MOTOR\x10\x00\x12\x10\n\x0c\x43ONT1_MOTOR1\x10\x01\x12\x10\n\x0c\x43ONT1_MOTOR2\x10\x02\x12\x0e\n\nCONT1_BOTH\x10\x04\x12\x0e\n\nCONT1_MASK\x10\x07\x12\x10\n\x0c\x43ONT2_MOTOR1\x10\x08\x12\x10\n\x0c\x43ONT2_MOTOR2\x10\x10\x12\x0e\n\nCONT2_BOTH\x10 \x12\x0e\n\nCONT2_MASK\x10?2\xf8\x01\n\x0f\x46rameController\x12G\n\x07StopAll\x12 .frame_controller.StopAllRequest\x1a\x18.frame_controller.Status\"\x00\x12K\n\tStopMotor\x12\".frame_controller.StopMotorRequest\x1a\x18.frame_controller.Status\"\x00\x12O\n\x0bSetVelocity\x12$.frame_controller.SetVelocityRequest\x1a\x18.frame_controller.Status\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x16\x66rame_controller.proto\x12\x10\x66rame_controller\"\x10\n\x0eStopAllRequest\"\"\n\x10StopMotorRequest\x12\x0e\n\x06motors\x18\x01 \x01(\x07\"N\n\x12SetVelocityRequest\x12\x0e\n\x06motors\x18\x01 \x01(\x07\x12\x12\n\nduty_cycle\x18\x02 \x01(\x02\x12\x14\n\x0c\x64uration_sec\x18\x03 \x01(\x02\"\x08\n\x06Status*7\n\rMotorBitshift\x12\x12\n\x0e\x43ONT1_BITSHIFT\x10\x00\x12\x12\n\x0e\x43ONT2_BITSHIFT\x10\x02*\x81\x01\n\tMotorEnum\x12\x0c\n\x08NO_MOTOR\x10\x00\x12\x10\n\x0c\x43ONT1_MOTOR1\x10\x01\x12\x10\n\x0c\x43ONT1_MOTOR2\x10\x02\x12\x0e\n\nCONT1_BOTH\x10\x03\x12\x10\n\x0c\x43ONT2_MOTOR1\x10\x04\x12\x10\n\x0c\x43ONT2_MOTOR2\x10\x08\x12\x0e\n\nCONT2_BOTH\x10\x0c\x32\xf8\x01\n\x0f\x46rameController\x12G\n\x07StopAll\x12 .frame_controller.StopAllRequest\x1a\x18.frame_controller.Status\"\x00\x12K\n\tStopMotor\x12\".frame_controller.StopMotorRequest\x1a\x18.frame_controller.Status\"\x00\x12O\n\x0bSetVelocity\x12$.frame_controller.SetVelocityRequest\x1a\x18.frame_controller.Status\"\x00\x62\x06proto3')
 )
 
 _MOTORBITSHIFT = _descriptor.EnumDescriptor(
@@ -34,7 +34,7 @@ _MOTORBITSHIFT = _descriptor.EnumDescriptor(
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CONT2_BITSHIFT', index=1, number=3,
+      name='CONT2_BITSHIFT', index=1, number=2,
       options=None,
       type=None),
   ],
@@ -65,49 +65,39 @@ _MOTORENUM = _descriptor.EnumDescriptor(
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CONT1_BOTH', index=3, number=4,
+      name='CONT1_BOTH', index=3, number=3,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CONT1_MASK', index=4, number=7,
+      name='CONT2_MOTOR1', index=4, number=4,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CONT2_MOTOR1', index=5, number=8,
+      name='CONT2_MOTOR2', index=5, number=8,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CONT2_MOTOR2', index=6, number=16,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='CONT2_BOTH', index=7, number=32,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='CONT2_MASK', index=8, number=63,
+      name='CONT2_BOTH', index=6, number=12,
       options=None,
       type=None),
   ],
   containing_type=None,
   options=None,
   serialized_start=246,
-  serialized_end=407,
+  serialized_end=375,
 )
 _sym_db.RegisterEnumDescriptor(_MOTORENUM)
 
 MotorEnum = enum_type_wrapper.EnumTypeWrapper(_MOTORENUM)
 CONT1_BITSHIFT = 0
-CONT2_BITSHIFT = 3
+CONT2_BITSHIFT = 2
 NO_MOTOR = 0
 CONT1_MOTOR1 = 1
 CONT1_MOTOR2 = 2
-CONT1_BOTH = 4
-CONT1_MASK = 7
-CONT2_MOTOR1 = 8
-CONT2_MOTOR2 = 16
-CONT2_BOTH = 32
-CONT2_MASK = 63
+CONT1_BOTH = 3
+CONT2_MOTOR1 = 4
+CONT2_MOTOR2 = 8
+CONT2_BOTH = 12
 
 
 
@@ -278,8 +268,8 @@ _FRAMECONTROLLER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=410,
-  serialized_end=658,
+  serialized_start=378,
+  serialized_end=626,
   methods=[
   _descriptor.MethodDescriptor(
     name='StopAll',

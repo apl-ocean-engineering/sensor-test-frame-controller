@@ -20,12 +20,9 @@ class FakePwm:
         self.logger.info("%s: Stopping" % self.logname)
 
     def set(self, motors, duty):
-        motorstr = "(unknown %d)" % motors
-        if motors == 1:
-            motorstr = "MOTOR1"
-        elif motors == 2:
-            motorstr = "MOTOR2"
-        elif motors == 4:
-            motorstr = "BOTH"
 
-        self.logger.info("%s: Set duty %02f pct. on motors %s", self.logname, (duty*100), motorstr)
+        if motors & 1:
+            self.logger.info("%s: Set duty %02f pct. on motor 1", self.logname, (duty*100))
+
+        if motors & 2:
+            self.logger.info("%s: Set duty %02f pct. on motor 2", self.logname, (duty*100))

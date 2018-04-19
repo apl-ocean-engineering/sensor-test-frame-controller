@@ -3,12 +3,42 @@ import logging
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
+M1_PWM_PIN = 
+M1_DIRECTION_PIN = 
+M2_PWM_PIN =
+M2_DIRECTION_PIN = 
+
+
+M3_PWM_PIN =
+M3_DIRECTION_PIN = 
+
+M4_PWM_PIN = 
+M4_DIRECTION_PIN = 
+
+# One instance of RealPWM handles the two motors running a single axis (pitch or yaw)
 class RealPwm:
 
-    def __init__(self,name,logger=None):
+    def __init__(self, name, logger=None):
         self.name = name
         self.logger = logger or logging.getLogger(__name__)
-	
+
+        if name.lower() == "pitch":
+            self.dir1 = M1_DIRECTION_PIN
+            self.pwm1 = M1_PWM_PIN
+
+            self.dir2 = M2_DIRECTION_PIN
+            self.pwm2 = M2_PWM_PIN
+
+        elif name.lower() == "yaw":
+            self.dir1 = M3_DIRECTION_PIN
+            self.pwm1 = M3_PWM_PIN
+
+            self.dir2 = M4_DIRECTION_PIN
+            self.pwm2 = M4_PWM_PIN
+
+        else:
+            self.logger.error("Trying to configure with unknown axis \"%s\"" % axis)
+
     @property
     def logname(self):
         return "Real " + self.name
@@ -16,65 +46,32 @@ class RealPwm:
     def start(self):
         self.logger.info("%s: Starting" % self.logname)
 
+        freq = 10000
+        PWM.start(self.pwm1, 0, freq)
+        PWM.start(self.pwm2, 0, freq)
+        GPIO.setup(self.dir1, GPIO.OUT)
+        GPIO.setup(self.dir2, GPIO.OUT)
+
     def stop(self):
         self.logger.info("%s: Stopping" % self.logname)
 
-    def setMotor(self, motors, duty, forward): # forward is a boolean. True: forward, False: reverse
-        motorstr = "(unknown %d)" % motors
-        if motors == 1:
-            motorstr = "MOTOR1"
-			PWM.set_duty_cycle(M1_PWM_PIN, float(duty))
-			if forward:
-				GPIO.output(M1_DIRECTION_PIN, GPIO.HIGH)
-			else:
-				GPIO.output(M1_DIRECTION_PIN, GPIO.LOW)
-        
-		elif motors == 2:
-            motorstr = "MOTOR2"
-			PWM.set_duty_cycle(M2_PWM_PIN, float(duty))
-			if forward:
-				GPIO.output(M2_DIRECTION_PIN, GPIO.HIGH)
-			else:
-				GPIO.output(M2_DIRECTION_PIN, GPIO.LOW)
-				
-        elif motors == 3:
-            motorstr = "MOTOR3"
-			PWM.set_duty_cycle(M3_PWM_PIN, float(duty))
-			if forward:
-				GPIO.output(M3_DIRECTION_PIN, GPIO.HIGH)
-			else:
-				GPIO.output(M3_DIRECTION_PIN, GPIO.LOW)
-			
-		elif motors == 4:
-			motorstr = "MOTOR4"
-			PWM.set_duty_cycle(M4_PWM_PIN, float(duty))
-			if forward:
-				GPIO.output(M4_DIRECTION_PIN, GPIO.HIGH)
-			else:
-				GPIO.output(M4_DIRECTION_PIN, GPIO.LOW)			
+        PWM.stop(self.pwm1)
+        PWM.stop(self.pwm2)
+        GPIO.cleanup()
 
-        self.logger.info("%s: Set duty %02f pct. on motors %s with forward = %s", self.logname, (duty*100), motorstr, str(forward))
+    def set(self, motors, duty):
+        if motors & 1:
+            self.logger.info("%s: Set duty %02f pct. on motor 1", self.logname, (duty*100))
+            PWM.set_duty_cycle(self.pwm1, float(duty))
+            if duty >= 0.0:
+                GPIO.output(self.dir1, GPIO.HIGH)
+            else:
+                GPIO.output(self.dir1, GPIO.LOW)
 
-	def setAxis(self, axis, duty, positive): # allows simultaneous control of two motors. direction is boolean (positive being clockwise from top, or pitching up).
-		axisStr = "(unknown %d)" %axis
-		if axis == 1: 
-			axisStr = "YAW"
-			if positive :
-				setMotor(self, 1, duty, true)
-				setMotor(self, 2, duty, false)
-			else:
-				setMotor(self, 1, duty, false)
-				setMotor(self, 2, duty, true)
-		elif axis == 2:
-			axisStr = "PITCH"
-			if positive :
-				setMotor(self, 3, duty, true)
-				setMotor(self, 4, duty, false)
-			else:
-				setMotor(self, 3, duty, false)
-				setMotor(self, 4, duty, true)
-		
-		self.logger.info("%s: Set duty %02f pct. on axis %s with positive direction = %s", self.logname, (duty*100), motorstr, str(positive))
-		
-	def stopAxis(self, axis): #stops axis
-		setAxis(self, axis, 0, false)
+        if motors & 2:
+            self.logger.info("%s: Set duty %02f pct. on motor 2", self.logname, (duty*100))
+            PWM.set_duty_cycle(self.pwm2, float(duty))
+            if duty >= 0.0:
+                GPIO.output(self.dir2, GPIO.HIGH)
+            else:
+                GPIO.output(self.dir2, GPIO.LOW)
