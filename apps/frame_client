@@ -65,21 +65,35 @@ def run():
 
     try:
       while True:
+        dur = 8 
 
         print("Sending motor velocity")
         request = frame_api.SetVelocityRequest()
-        request.axes = frame_api.AXIS_YAW | frame_api.AXIS_PITCH
+        request.axes = frame_api.AXIS_YAW
         request.motors = frame_api.CONT_BOTH
         request.duty_cycle = 1.0
-
         response = stub.SetVelocity(request)
         print("Got this response: %s" % response)
-        time.sleep(5)
+        time.sleep(dur)
 
-        request.duty_cycle = -1.0
+        request.axes = frame_api.AXIS_PITCH
         response = stub.SetVelocity(request)
         print("Got this response: %s" % response)
-        time.sleep(5)
+        time.sleep(dur)
+
+        request.axes = frame_api.AXIS_YAW
+        request.duty_cycle= -1.0
+        response = stub.SetVelocity(request)
+        print("Got this response: %s" % response)
+        time.sleep(dur)
+
+        request.axes = frame_api.AXIS_PITCH
+        response = stub.SetVelocity(request)
+        print("Got this response: %s" % response)
+        time.sleep(dur)
+
+
+
 
     except KeyboardInterrupt:
 
