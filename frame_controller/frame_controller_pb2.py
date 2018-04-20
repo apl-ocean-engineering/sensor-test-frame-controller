@@ -20,32 +20,36 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='frame_controller.proto',
   package='frame_controller',
   syntax='proto3',
-  serialized_pb=_b('\n\x16\x66rame_controller.proto\x12\x10\x66rame_controller\"\x10\n\x0eStopAllRequest\"\"\n\x10StopMotorRequest\x12\x0e\n\x06motors\x18\x01 \x01(\x07\"N\n\x12SetVelocityRequest\x12\x0e\n\x06motors\x18\x01 \x01(\x07\x12\x12\n\nduty_cycle\x18\x02 \x01(\x02\x12\x14\n\x0c\x64uration_sec\x18\x03 \x01(\x02\"\x08\n\x06Status*7\n\rMotorBitshift\x12\x12\n\x0e\x43ONT1_BITSHIFT\x10\x00\x12\x12\n\x0e\x43ONT2_BITSHIFT\x10\x02*\x81\x01\n\tMotorEnum\x12\x0c\n\x08NO_MOTOR\x10\x00\x12\x10\n\x0c\x43ONT1_MOTOR1\x10\x01\x12\x10\n\x0c\x43ONT1_MOTOR2\x10\x02\x12\x0e\n\nCONT1_BOTH\x10\x03\x12\x10\n\x0c\x43ONT2_MOTOR1\x10\x04\x12\x10\n\x0c\x43ONT2_MOTOR2\x10\x08\x12\x0e\n\nCONT2_BOTH\x10\x0c\x32\xf8\x01\n\x0f\x46rameController\x12G\n\x07StopAll\x12 .frame_controller.StopAllRequest\x1a\x18.frame_controller.Status\"\x00\x12K\n\tStopMotor\x12\".frame_controller.StopMotorRequest\x1a\x18.frame_controller.Status\"\x00\x12O\n\x0bSetVelocity\x12$.frame_controller.SetVelocityRequest\x1a\x18.frame_controller.Status\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x16\x66rame_controller.proto\x12\x10\x66rame_controller\"\x10\n\x0eStopAllRequest\"0\n\x10StopMotorRequest\x12\x0e\n\x06motors\x18\x01 \x01(\x07\x12\x0c\n\x04\x61xes\x18\x02 \x01(\x07\"\\\n\x12SetVelocityRequest\x12\x0e\n\x06motors\x18\x01 \x01(\x07\x12\x0c\n\x04\x61xes\x18\x02 \x01(\x07\x12\x12\n\nduty_cycle\x18\x03 \x01(\x02\x12\x14\n\x0c\x64uration_sec\x18\x04 \x01(\x02\"\x08\n\x06Status*6\n\tMotorAxis\x12\x0b\n\x07NO_AXES\x10\x00\x12\x0e\n\nAXIS_PITCH\x10\x01\x12\x0c\n\x08\x41XIS_YAW\x10\x02*J\n\tMotorEnum\x12\x0c\n\x08NO_MOTOR\x10\x00\x12\x0f\n\x0b\x43ONT_MOTOR1\x10\x01\x12\x0f\n\x0b\x43ONT_MOTOR2\x10\x02\x12\r\n\tCONT_BOTH\x10\x03\x32\xf8\x01\n\x0f\x46rameController\x12G\n\x07StopAll\x12 .frame_controller.StopAllRequest\x1a\x18.frame_controller.Status\"\x00\x12K\n\tStopMotor\x12\".frame_controller.StopMotorRequest\x1a\x18.frame_controller.Status\"\x00\x12O\n\x0bSetVelocity\x12$.frame_controller.SetVelocityRequest\x1a\x18.frame_controller.Status\"\x00\x62\x06proto3')
 )
 
-_MOTORBITSHIFT = _descriptor.EnumDescriptor(
-  name='MotorBitshift',
-  full_name='frame_controller.MotorBitshift',
+_MOTORAXIS = _descriptor.EnumDescriptor(
+  name='MotorAxis',
+  full_name='frame_controller.MotorAxis',
   filename=None,
   file=DESCRIPTOR,
   values=[
     _descriptor.EnumValueDescriptor(
-      name='CONT1_BITSHIFT', index=0, number=0,
+      name='NO_AXES', index=0, number=0,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CONT2_BITSHIFT', index=1, number=2,
+      name='AXIS_PITCH', index=1, number=1,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='AXIS_YAW', index=2, number=2,
       options=None,
       type=None),
   ],
   containing_type=None,
   options=None,
-  serialized_start=188,
-  serialized_end=243,
+  serialized_start=216,
+  serialized_end=270,
 )
-_sym_db.RegisterEnumDescriptor(_MOTORBITSHIFT)
+_sym_db.RegisterEnumDescriptor(_MOTORAXIS)
 
-MotorBitshift = enum_type_wrapper.EnumTypeWrapper(_MOTORBITSHIFT)
+MotorAxis = enum_type_wrapper.EnumTypeWrapper(_MOTORAXIS)
 _MOTORENUM = _descriptor.EnumDescriptor(
   name='MotorEnum',
   full_name='frame_controller.MotorEnum',
@@ -57,47 +61,33 @@ _MOTORENUM = _descriptor.EnumDescriptor(
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CONT1_MOTOR1', index=1, number=1,
+      name='CONT_MOTOR1', index=1, number=1,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CONT1_MOTOR2', index=2, number=2,
+      name='CONT_MOTOR2', index=2, number=2,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CONT1_BOTH', index=3, number=3,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='CONT2_MOTOR1', index=4, number=4,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='CONT2_MOTOR2', index=5, number=8,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='CONT2_BOTH', index=6, number=12,
+      name='CONT_BOTH', index=3, number=3,
       options=None,
       type=None),
   ],
   containing_type=None,
   options=None,
-  serialized_start=246,
-  serialized_end=375,
+  serialized_start=272,
+  serialized_end=346,
 )
 _sym_db.RegisterEnumDescriptor(_MOTORENUM)
 
 MotorEnum = enum_type_wrapper.EnumTypeWrapper(_MOTORENUM)
-CONT1_BITSHIFT = 0
-CONT2_BITSHIFT = 2
+NO_AXES = 0
+AXIS_PITCH = 1
+AXIS_YAW = 2
 NO_MOTOR = 0
-CONT1_MOTOR1 = 1
-CONT1_MOTOR2 = 2
-CONT1_BOTH = 3
-CONT2_MOTOR1 = 4
-CONT2_MOTOR2 = 8
-CONT2_BOTH = 12
+CONT_MOTOR1 = 1
+CONT_MOTOR2 = 2
+CONT_BOTH = 3
 
 
 
@@ -139,6 +129,13 @@ _STOPMOTORREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='axes', full_name='frame_controller.StopMotorRequest.axes', index=1,
+      number=2, type=7, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -152,7 +149,7 @@ _STOPMOTORREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=62,
-  serialized_end=96,
+  serialized_end=110,
 )
 
 
@@ -171,15 +168,22 @@ _SETVELOCITYREQUEST = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='duty_cycle', full_name='frame_controller.SetVelocityRequest.duty_cycle', index=1,
-      number=2, type=2, cpp_type=6, label=1,
+      name='axes', full_name='frame_controller.SetVelocityRequest.axes', index=1,
+      number=2, type=7, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='duty_cycle', full_name='frame_controller.SetVelocityRequest.duty_cycle', index=2,
+      number=3, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='duration_sec', full_name='frame_controller.SetVelocityRequest.duration_sec', index=2,
-      number=3, type=2, cpp_type=6, label=1,
+      name='duration_sec', full_name='frame_controller.SetVelocityRequest.duration_sec', index=3,
+      number=4, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -196,8 +200,8 @@ _SETVELOCITYREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=98,
-  serialized_end=176,
+  serialized_start=112,
+  serialized_end=204,
 )
 
 
@@ -220,15 +224,15 @@ _STATUS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=178,
-  serialized_end=186,
+  serialized_start=206,
+  serialized_end=214,
 )
 
 DESCRIPTOR.message_types_by_name['StopAllRequest'] = _STOPALLREQUEST
 DESCRIPTOR.message_types_by_name['StopMotorRequest'] = _STOPMOTORREQUEST
 DESCRIPTOR.message_types_by_name['SetVelocityRequest'] = _SETVELOCITYREQUEST
 DESCRIPTOR.message_types_by_name['Status'] = _STATUS
-DESCRIPTOR.enum_types_by_name['MotorBitshift'] = _MOTORBITSHIFT
+DESCRIPTOR.enum_types_by_name['MotorAxis'] = _MOTORAXIS
 DESCRIPTOR.enum_types_by_name['MotorEnum'] = _MOTORENUM
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -268,8 +272,8 @@ _FRAMECONTROLLER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=378,
-  serialized_end=626,
+  serialized_start=349,
+  serialized_end=597,
   methods=[
   _descriptor.MethodDescriptor(
     name='StopAll',

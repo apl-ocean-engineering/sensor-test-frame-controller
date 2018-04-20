@@ -11,11 +11,11 @@ M1_DIRECTION_PIN = "P9_13"
 M2_PWM_PIN = "P9_16"
 M2_DIRECTION_PIN = "P9_15"
 
-M3_PWM_PIN = "P8_34"
-M3_DIRECTION_PIN = "P8_33"
+M3_PWM_PIN = "P9_21"
+M3_DIRECTION_PIN = "P9_23"
 
-M4_PWM_PIN = "P8_36"
-M4_DIRECTION_PIN = "P8_35"
+M4_PWM_PIN = "P9_22"
+M4_DIRECTION_PIN = "P9_25"
 
 # One instance of RealPWM handles the two motors running a single axis (pitch or yaw)
 class RealPwm:
@@ -24,14 +24,14 @@ class RealPwm:
         self.name = name
         self.logger = logger or logging.getLogger(__name__)
 
-        if name.lower() == "pitch":
+        if name.lower() == "yaw":
             self.dir1 = M1_DIRECTION_PIN
             self.pwm1 = M1_PWM_PIN
 
             self.dir2 = M2_DIRECTION_PIN
             self.pwm2 = M2_PWM_PIN
 
-        elif name.lower() == "yaw":
+        elif name.lower() == "pitch":
             self.dir1 = M3_DIRECTION_PIN
             self.pwm1 = M3_PWM_PIN
 
@@ -45,8 +45,8 @@ class RealPwm:
     def logname(self):
         return "Real " + self.name
 
-    def start(self):
-        self.logger.info("%s: Starting" % self.logname)
+    def setup(self):
+        self.logger.info("%s: Initializing" % self.logname)
 
         freq = 10000
         PWM.start(self.pwm1, 0, freq)
@@ -54,26 +54,37 @@ class RealPwm:
         GPIO.setup(self.dir1, GPIO.OUT)
         GPIO.setup(self.dir2, GPIO.OUT)
 
-    def stop(self):
-        self.logger.info("%s: Stopping" % self.logname)
+    def cleanup(self):
+        self.logger.info("%s: Cleaning up" % self.logname)
 
         PWM.stop(self.pwm1)
         PWM.stop(self.pwm2)
         GPIO.cleanup()
 
     def set(self, motors, duty):
+        duty = int(100*duty)
+        if duty > 100:
+                duty = 100
+        if duty < -100:
+                duty = -100
+
+        if motors & 2:
+            self.logger.info("%s: Set duty %d pct. on motor 2, pwm %s", self.logname, duty, self.pwm2)
+            PWM.set_duty_cycle(self.pwm2, abs(duty))
+            if duty >= 0.0:
+                GPIO.output(self.dir2, GPIO.HIGH)
+            else:
+                GPIO.output(self.dir2, GPIO.LOW)
+
         if motors & 1:
-            self.logger.info("%s: Set duty %02f pct. on motor 1", self.logname, (duty*100))
-            PWM.set_duty_cycle(self.pwm1, float(duty))
+            self.logger.info("%s: Set duty %d pct. on motor 1, pwm %s", self.logname, duty, self.pwm1)
+            PWM.set_duty_cycle(self.pwm1, abs(duty))
             if duty >= 0.0:
                 GPIO.output(self.dir1, GPIO.HIGH)
             else:
                 GPIO.output(self.dir1, GPIO.LOW)
 
-        if motors & 2:
-            self.logger.info("%s: Set duty %02f pct. on motor 2", self.logname, (duty*100))
-            PWM.set_duty_cycle(self.pwm2, float(duty))
-            if duty >= 0.0:
-                GPIO.output(self.dir2, GPIO.HIGH)
-            else:
-                GPIO.output(self.dir2, GPIO.LOW)
+
+    def stopAll(self):
+           PWM.set_duty_cycle(self.pwm1,0)
+           PWM.set_duty_cycle(self.pwm2,0)

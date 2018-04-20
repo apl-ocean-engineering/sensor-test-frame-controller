@@ -42,19 +42,19 @@ class FrameController(frame_grpc.FrameControllerServicer):
             self.yaw   = RealPwm("Yaw", self.logger)
 
     def cleanup(self):
-        self.pitch.stop()
-        self.yaw.stop()
+        self.pitch.cleanup()
+        self.yaw.cleanup()
 
     # Main control loop
     def controlLoop(self):
         loops = 0
 
-        self.pitch.start()
-        self.yaw.start()
+        self.pitch.setup()
+        self.yaw.setup()
 
         startTime = datetime.now()
         while True:
-            if loops % 10 == 0:
+            if loops % 50 == 0:
                 self.logger.info("Control loop %d : %.2f" % (loops,(datetime.now()-startTime).total_seconds()))
 
             loops += 1
@@ -63,14 +63,16 @@ class FrameController(frame_grpc.FrameControllerServicer):
     # Respond to gRPC commands
     def StopAll(self, request, context):
         self.logger.warn("Stopping all motors!!")
+        self.pitch.stopAll()
+        self.yaw.stopAll()
         return frame_api.Status()
 
     def SetVelocity(self, request, context):
-        if request.motors & frame_api.CONT1_BOTH:
+        if request.axes & frame_api.AXIS_PITCH:
             self.pitch.set( request.motors, request.duty_cycle )
 
-        if request.motors & frame_api.CONT2_BOTH:
-            self.yaw.set( request.motors >> frame_api.CONT2_BITSHIFT, request.duty_cycle )
+        if request.axes & frame_api.AXIS_YAW:
+            self.yaw.set( request.motors, request.duty_cycle )
 
         # else:
         #     self.logger.warn("Didn't understand motor mask %d" % request.motors )
