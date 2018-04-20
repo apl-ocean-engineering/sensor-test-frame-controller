@@ -1,19 +1,21 @@
+import Adafruit_BBIO.PWM as PWM
+import Adafruit_BBIO.GPIO as GPIO
 
 import logging
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
-M1_PWM_PIN = 
-M1_DIRECTION_PIN = 
-M2_PWM_PIN =
-M2_DIRECTION_PIN = 
+M1_PWM_PIN = "P9_14"
+M1_DIRECTION_PIN = "P9_13"
 
+M2_PWM_PIN = "P9_16"
+M2_DIRECTION_PIN = "P9_15"
 
-M3_PWM_PIN =
-M3_DIRECTION_PIN = 
+M3_PWM_PIN = "P8_34"
+M3_DIRECTION_PIN = "P8_33"
 
-M4_PWM_PIN = 
-M4_DIRECTION_PIN = 
+M4_PWM_PIN = "P8_36"
+M4_DIRECTION_PIN = "P8_35"
 
 # One instance of RealPWM handles the two motors running a single axis (pitch or yaw)
 class RealPwm:

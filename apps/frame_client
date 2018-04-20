@@ -71,11 +71,6 @@ def run():
     response = stub.SetVelocity(request)
     print("Got this response: %s" % response)
 
-    request.motors = frame_api.CONT2_MOTOR1
-    request.duty_cycle = -0.75
-    response = stub.SetVelocity(request)
-    print("Got this response: %s" % response)
-
     time.sleep(2)
 
     print("Sending stop all")
