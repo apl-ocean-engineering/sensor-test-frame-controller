@@ -63,25 +63,29 @@ def run():
     #     else :
     # 	print("Non-legal value(s) given.")
 
-    print("Sending motor velocity")
-    request = frame_api.SetVelocityRequest()
-    request.axes = frame_api.AXIS_YAW | frame_api.AXIS_PITCH
-    request.motors = frame_api.CONT_BOTH
-    request.duty_cycle = 1.0
+    try:
+      while True:
 
-    response = stub.SetVelocity(request)
-    print("Got this response: %s" % response)
-    time.sleep(2)
+        print("Sending motor velocity")
+        request = frame_api.SetVelocityRequest()
+        request.axes = frame_api.AXIS_YAW | frame_api.AXIS_PITCH
+        request.motors = frame_api.CONT_BOTH
+        request.duty_cycle = 1.0
 
-    request.duty_cycle = -1.0
-    response = stub.SetVelocity(request)
-    print("Got this response: %s" % response)
-    time.sleep(2)
+        response = stub.SetVelocity(request)
+        print("Got this response: %s" % response)
+        time.sleep(5)
 
+        request.duty_cycle = -1.0
+        response = stub.SetVelocity(request)
+        print("Got this response: %s" % response)
+        time.sleep(5)
 
-    print("Sending stop all")
-    response = stub.StopAll(frame_api.StopAllRequest())
-    print("Got this response: %s" % response)
+    except KeyboardInterrupt:
+
+      print("Sending stop all")
+      response = stub.StopAll(frame_api.StopAllRequest())
+      print("Got this response: %s" % response)
 
 
 if __name__ == '__main__':

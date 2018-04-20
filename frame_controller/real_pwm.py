@@ -15,7 +15,7 @@ M3_PWM_PIN = "P9_21"
 M3_DIRECTION_PIN = "P9_23"
 
 M4_PWM_PIN = "P9_22"
-M4_DIRECTION_PIN = "P9_25"
+M4_DIRECTION_PIN = "P9_41"
 
 # One instance of RealPWM handles the two motors running a single axis (pitch or yaw)
 class RealPwm:
