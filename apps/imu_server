@@ -8,6 +8,7 @@ from yostlabs.server import ImuServer
 import argparse
 
 import logging
+import pika
 
 def run():
 
@@ -18,9 +19,14 @@ def run():
     parser.add_argument('name', help='Name of the IMU')
     parser.add_argument('port', help='Serial port (ignored for --fake-hardware)')
 
+    parser.add_argument('--mq-user', default='guest', dest='mquser', help="RabbitMQ Username")
+    parser.add_argument('--mq-passwd', default='guest', dest='mqpwd', help="RabbitMQ Username")
+
+
     args = parser.parse_args()
 
-    server = ImuServer(args.name, fakehw=args.fakehw, port=args.port)
+    server = ImuServer(args.name, fakehw=args.fakehw, port=args.port,
+                        credentials=pika.PlainCredentials(args.mquser, args.mqpwd) )
 
     # Configure the IMU server's logger
     server.logger.setLevel(logging.INFO)

@@ -13,11 +13,12 @@ from .base import Base
 
 class ImuClient(Base):
 
-    def __init__(self, name):
+    def __init__(self, name, credentials=None):
         Base.__init__(self,name)
         self.logger = logging.getLogger(self.full_name())
 
-        credentials = pika.PlainCredentials('guest', 'guest')
+        if not credentials:
+            credentials = pika.PlainCredentials('guest', 'guest')
         params = pika.ConnectionParameters(host='localhost', port=5672, credentials=credentials)
         self.connection = pika.BlockingConnection(params)
         self.channel = self.connection.channel()

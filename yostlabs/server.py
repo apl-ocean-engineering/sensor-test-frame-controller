@@ -17,7 +17,8 @@ from .fake_imu import FakeImu
 
 class ImuServer(Base):
 
-    def __init__(self, name, fakehw=False, port=None):
+    def __init__(self, name, fakehw=False, port=None,
+                credentials=None):
         Base.__init__(self, name)
         self.logger = logging.getLogger(self.full_name())
 
@@ -26,7 +27,8 @@ class ImuServer(Base):
         else:
             self.imu = Imu(name, port)
 
-        credentials = pika.PlainCredentials('guest', 'guest')
+        if not credentials:
+            credentials = pika.PlainCredentials('guest', 'guest')
         params = pika.ConnectionParameters(host='localhost', port=5672, credentials=credentials)
 
         self.connection = pika.BlockingConnection(params)
