@@ -1,0 +1,16 @@
+// Copyright 2018 UW-APL
+//  Protobuf description
+
+syntax = "proto3";
+
+package yostlabs_data;
+
+// To be determined
+message Quaternions {
+  float timestamp = 1;
+  int64 sequence  = 2;
+  float q1 = 3;
+  float q2 = 4;
+  float q3 = 5;
+  float q4 = 6;
+}

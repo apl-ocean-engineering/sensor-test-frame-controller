@@ -7,6 +7,8 @@ import sys
 import logging
 import time
 
+import yostlabs.imu_data_pb2 as imu_api
+
 from .base import BaseImu
 
 class ImuClient(BaseImu):
@@ -36,7 +38,9 @@ class ImuClient(BaseImu):
         self.logger.warning(' [*] Waiting for logs. To exit press CTRL+C')
 
         def callback(ch, method, properties, body):
-            self.logger.info(" [x] %r" % body)
+            packet = imu_api.Quaternions()
+            packet.ParseFromString(body)
+            self.logger.info(" [x] Got packet %d" % packet.sequence)
 
         self.channel.basic_consume(callback,
                               queue=self.queue_name,
