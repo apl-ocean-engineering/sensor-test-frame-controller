@@ -17,7 +17,7 @@ class ImuClient(Base):
         Base.__init__(self,name)
         self.logger = logging.getLogger(self.full_name())
 
-        credentials = pika.PlainCredentials('user', 'bitnami')
+        credentials = pika.PlainCredentials('guest', 'guest')
         params = pika.ConnectionParameters(host='localhost', port=5672, credentials=credentials)
         self.connection = pika.BlockingConnection(params)
         self.channel = self.connection.channel()
