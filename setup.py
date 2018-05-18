@@ -8,8 +8,8 @@ setup(
     description='Client/server for controlling the SERDP test frame',
     url='https://github.com/apl-ocean-engineering/sensor-test-frame-controller',
     license='MIT',
-    packages=['frame_controller'],
-    install_requires=['grpcio'],
+    packages=['frame_controller', 'yostlabs'],
+    install_requires=['grpcio','pika'],
     extras_require={
         'dev': ['grpcio_tools']
     },

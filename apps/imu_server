@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+# Copyright 2018 UW-APL
+# See LICENSE
+
+# Launch an IMU server
+
+from yostlabs.server import ImuServer
+import argparse
+
+import logging
+
+def run():
+    parser = argparse.ArgumentParser(description='IMU server.')
+    parser.add_argument('--fake-hardware', dest='fakehw', action='store_true',
+                        help='Use fake PWM hardware')
+    parser.add_argument('name', help='Name for IMU')
+    parser.add_argument('port', help='Serial port (ignored for --fake-hardware)')
+
+    args = parser.parse_args()
+
+    server = ImuServer(args.name, fakehw=args.fakehw)
+
+    # Configure the logger built into the imu server
+    server.logger.setLevel(logging.INFO)
+    server.logger.addHandler(logging.StreamHandler())
+
+    server.run()
+
+if __name__ == '__main__':
+
+    run()
