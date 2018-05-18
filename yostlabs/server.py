@@ -41,12 +41,16 @@ class ImuServer(Base):
     def close(self):
         self.connection.close()
 
-    def send(self):
+    def send(self,euler):
         # Make an IMU data packet
-        packet = imu_api.Quaternions()
+        packet = imu_api.EulerAngles()
         packet.timestamp = time.monotonic()
         packet.sequence = self.sequence
         self.sequence += 1
+
+        packet.roll = euler['roll']
+        packet.pitch = euler['pitch']
+        packet.yaw  = euler['yaw']
 
         self.channel.basic_publish(exchange='yostlabs',
                                   routing_key=self.full_name(),
@@ -56,9 +60,9 @@ class ImuServer(Base):
     def run(self):
         self.logger.warning("IMU Server %s running ..." % self.name)
 
-        def callback():
-            self.send()
+        # def callback(euler):
+        #     self.send()
 
-        self.imu.add_callback( callback )
+        self.imu.add_callback( self.send )
 
         self.imu.run()

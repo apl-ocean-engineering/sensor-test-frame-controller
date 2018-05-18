@@ -3,6 +3,8 @@
 import logging
 import time
 
+import random
+
 class Imu:
 
     def __init__(self, name, port):
@@ -16,8 +18,9 @@ class Imu:
     def run(self):
         while True:
             ## New data!
+            euler = { 'roll': random.random(), 'pitch': random.random(), 'yaw': random.random()}
 
             for c in self.callbacks:
-                c()
+                c(euler)
 
             time.sleep(1)

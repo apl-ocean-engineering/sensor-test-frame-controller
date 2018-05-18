@@ -38,9 +38,10 @@ class ImuClient(Base):
         self.logger.warning(' [*] Waiting for logs. To exit press CTRL+C')
 
         def callback(ch, method, properties, body):
-            packet = imu_api.Quaternions()
+            packet = imu_api.EulerAngles()
             packet.ParseFromString(body)
-            self.logger.info(" [x] Got packet %d" % packet.sequence)
+            self.logger.info(" [x] Got packet %d:   R %6.2f    P %6.2f    Y%6.2f"
+                        % (packet.sequence, packet.roll, packet.pitch, packet.yaw) )
 
         self.channel.basic_consume(callback,
                               queue=self.queue_name,

@@ -2,6 +2,7 @@
 
 import logging
 import time
+import random
 
 class FakeImu:
 
@@ -16,8 +17,9 @@ class FakeImu:
     def run(self):
         while True:
             ## New data has arrived!
+            euler = { 'roll': random.random(), 'pitch': random.random(), 'yaw': random.random()}
 
             for c in self.callbacks:
-                c()
+                c(euler)
 
             time.sleep(1)
