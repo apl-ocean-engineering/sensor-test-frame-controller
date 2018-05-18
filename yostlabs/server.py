@@ -9,13 +9,22 @@ import time
 
 import yostlabs.imu_data_pb2 as imu_api
 
-from .base import BaseImu
+from .base import Base
 
-class ImuServer(BaseImu):
+from .imu import Imu
+from .fake_imu import FakeImu
 
-    def __init__(self, name, fakehw):
-        BaseImu.__init__(self, name)
+class ImuServer(Base):
+
+    def __init__(self, name, fakehw=False, port=None):
+        Base.__init__(self, name)
         self.logger = logging.getLogger(self.full_name())
+
+        if fakehw:
+            self.imu = FakeImu(name)
+        else:
+            self.imu = Imu(name, port)
+
 
         credentials = pika.PlainCredentials('user', 'bitnami')
         params = pika.ConnectionParameters(host='localhost', port=5672, credentials=credentials)
@@ -46,6 +55,10 @@ class ImuServer(BaseImu):
 
     def run(self):
         self.logger.warning("IMU Server %s running ..." % self.name)
-        while True:
+
+        def callback():
             self.send()
-            time.sleep(1)
+
+        self.imu.add_callback( callback )
+
+        self.imu.run()

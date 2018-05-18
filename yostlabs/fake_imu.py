@@ -3,9 +3,9 @@
 import logging
 import time
 
-class Imu:
+class FakeImu:
 
-    def __init__(self, name, port):
+    def __init__(self,name):
         self.name = name
         self.logger = logging.getLogger(name)
         self.callbacks = []
@@ -15,7 +15,7 @@ class Imu:
 
     def run(self):
         while True:
-            ## New data!
+            ## New data has arrived!
 
             for c in self.callbacks:
                 c()

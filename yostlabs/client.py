@@ -9,12 +9,12 @@ import time
 
 import yostlabs.imu_data_pb2 as imu_api
 
-from .base import BaseImu
+from .base import Base
 
-class ImuClient(BaseImu):
+class ImuClient(Base):
 
     def __init__(self, name):
-        BaseImu.__init__(self,name)
+        Base.__init__(self,name)
         self.logger = logging.getLogger(self.full_name())
 
         credentials = pika.PlainCredentials('user', 'bitnami')

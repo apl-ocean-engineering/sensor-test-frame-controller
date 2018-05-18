@@ -20,7 +20,7 @@ def run():
 
     args = parser.parse_args()
 
-    server = ImuServer(args.name, fakehw=args.fakehw)
+    server = ImuServer(args.name, fakehw=args.fakehw, port=args.port)
 
     # Configure the IMU server's logger
     server.logger.setLevel(logging.INFO)
