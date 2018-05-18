@@ -10,21 +10,26 @@ import argparse
 import logging
 
 def run():
+
+    # Parse command line args
     parser = argparse.ArgumentParser(description='IMU server.')
     parser.add_argument('--fake-hardware', dest='fakehw', action='store_true',
                         help='Use fake PWM hardware')
-    parser.add_argument('name', help='Name for IMU')
+    parser.add_argument('name', help='Name of the IMU')
     parser.add_argument('port', help='Serial port (ignored for --fake-hardware)')
 
     args = parser.parse_args()
 
     server = ImuServer(args.name, fakehw=args.fakehw)
 
-    # Configure the logger built into the imu server
+    # Configure the IMU server's logger
     server.logger.setLevel(logging.INFO)
     server.logger.addHandler(logging.StreamHandler())
 
-    server.run()
+    try:
+        server.run()
+    except KeyboardInterrupt:
+        server.close()
 
 if __name__ == '__main__':
 

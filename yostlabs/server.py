@@ -7,12 +7,13 @@ import sys
 import logging
 import time
 
-class ImuServer:
+from .base import BaseImu
+
+class ImuServer(BaseImu):
 
     def __init__(self, name, fakehw):
-        self.name = name
-        self.full_name = "imu_%s" % name
-        self.logger = logging.getLogger(self.full_name)
+        BaseImu.__init__(self, name)
+        self.logger = logging.getLogger(self.full_name())
 
         credentials = pika.PlainCredentials('user', 'bitnami')
         params = pika.ConnectionParameters(host='localhost', port=5672, credentials=credentials)
@@ -20,18 +21,19 @@ class ImuServer:
         self.connection = pika.BlockingConnection(params)
         self.channel = self.connection.channel()
 
-        self.logger.info("Connecting to exchange \"%s\"" % self.full_name)
-        self.channel.exchange_declare(exchange=self.full_name,
-                                      exchange_type='fanout')
+        self.logger.info("Connecting to exchange \"%s\"" % self.full_name())
+        self.channel.exchange_declare(exchange='yostlabs',
+                                      exchange_type='direct')
+
+    def close(self):
+        self.connection.close()
 
     def send(self):
-        message = "info: Hello World!"
-        self.channel.basic_publish(exchange=self.full_name,
-                                  routing_key='',
+        message = "%s: Hello World!" % self.name
+        self.channel.basic_publish(exchange='yostlabs',
+                                  routing_key=self.full_name(),
                                   body=message)
-        print(" [x] Sent %r" % message)
-
-        #connection.close()
+        self.logger.info(" [x] Sent %r" % message)
 
     def run(self):
         self.logger.warning("IMU Server %s running ..." % self.name)
