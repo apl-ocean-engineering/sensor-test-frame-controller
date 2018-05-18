@@ -17,7 +17,9 @@ class FakeImu:
     def run(self):
         while True:
             ## New data has arrived!
-            euler = { 'roll': random.random(), 'pitch': random.random(), 'yaw': random.random()}
+            euler = {'roll': random.random(),
+                     'pitch': random.random(),
+                     'yaw': random.random()}
 
             for c in self.callbacks:
                 c(euler)
