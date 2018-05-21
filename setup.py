@@ -4,12 +4,12 @@ from setuptools import setup
 
 setup(
     name='frame_controller',    # This is the name of your PyPI-package.
-    version='0.1',                          # Update the version number for new releases
+    version='0.2',                          # Update the version number for new releases
     description='Client/server for controlling the SERDP test frame',
     url='https://github.com/apl-ocean-engineering/sensor-test-frame-controller',
     license='MIT',
     packages=['frame_controller', 'yostlabs'],
-    install_requires=['grpcio','pika'],
+    install_requires=['grpcio'],
     extras_require={
         'dev': ['grpcio_tools']
     },
