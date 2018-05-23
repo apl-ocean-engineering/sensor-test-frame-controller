@@ -6,7 +6,7 @@ import logging
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 M1_PWM_PIN = "P9_14"
-M1_DIRECTION_PIN = "P9_13"
+M1_DIRECTION_PIN = "P9_12"
 
 M2_PWM_PIN = "P9_16"
 M2_DIRECTION_PIN = "P9_15"
