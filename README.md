@@ -54,7 +54,7 @@ To automatically install the development dependencies
 If you change the gRPC prototype defined in `frame_controller/frame_controller.proto`, you must install the development dependencies about, then run `make proto` to rebuild the protobuf definitions.
 
 
-## Rnuning the package NOT on a Beaglebone Black
+## Running the package NOT on a Beaglebone Black
 
 `apps/frame_server` is the entrypoint for the frame server.
 
@@ -65,3 +65,48 @@ In one window, run:
 In another window:
 
     python apps/frame_client
+    
+    
+-----
+
+# Hardware Config
+
+In the current configuration,
+
+IMU 1 RX; UART1_RXD; P9.26
+IMU 1 TX; UART1_TXD; P9.24
+IMU 2 RX; UART4_RXD; P9.11
+IMU 2 TX; UART4_TXD; P9.13
+
+Using these serial ports requires configuring the pins on the BBB.  This can be done manually with the `config-pin` command.   To query the current pin status:
+
+    $ config-pin  -q p9.11
+    P9_11 Mode: default Direction: in Value: 0
+
+In this case P9.11 is current set as a GPIO, not as a UART.   To set as a UART (and P9.13 as well):
+
+    $ config-pin p9.11 uart
+    $ config-pin p9.13 uart
+    
+ Querying again:
+ 
+     $ config-pin  -q p9.11
+    P9_11 Mode: uart
+    
+To make this happen automatically, added it to `/etc/rc.local`
+
+
+This is the current PWM configuration:
+
+
+    M1_PWM_PIN = "P9_14"
+    M1_DIRECTION_PIN = "P9_12"
+
+    M2_PWM_PIN = "P9_16"
+    M2_DIRECTION_PIN = "P9_15"
+
+    M3_PWM_PIN = "P9_21"
+    M3_DIRECTION_PIN = "P9_23"
+
+    M4_PWM_PIN = "P9_22"
+    M4_DIRECTION_PIN = "P9_41"
