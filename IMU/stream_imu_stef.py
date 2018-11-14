@@ -8,6 +8,37 @@
 import serial
 import struct
 import io
+import sys
+import glob
+import time
+
+def serial_ports():
+    """ Lists serial port names
+
+        :raises EnvironmentError:
+            On unsupported or unknown platforms
+        :returns:
+            A list of the serial ports available on the system
+    """
+    if sys.platform.startswith('win'):
+        ports = ['COM%s' % (i + 1) for i in range(256)]
+    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+        # this excludes your current terminal "/dev/tty"
+        ports = glob.glob('/dev/tty[A-Za-z]*')
+    elif sys.platform.startswith('darwin'):
+        ports = glob.glob('/dev/tty.*')
+    else:
+        raise EnvironmentError('Unsupported platform')
+
+    result = []
+    for port in ports:
+        try:
+            s = serial.Serial(port)
+            s.close()
+            result.append(port)
+        except (OSError, serial.SerialException):
+            pass
+    return result
 
 def send_command_bytes_usb(data):
     global port
@@ -22,8 +53,9 @@ def send_command_bytes_usb(data):
     port.write(packet.encode('latin1'))
 
 # Prompt the user for the command port
-# port_name = "/dev/tty.usbmodem1411"
+print(serial_ports())
 port_name = input("Please input the com port of the device: ")
+# port_name = "/dev/tty.usbmodem1411"
 
 # Create the serial port for communication
 port = serial.Serial(port_name,115200,timeout=1)
@@ -60,17 +92,35 @@ port.read(4)
 send_command_bytes_usb(chr(0x50)+chr(0x0)+chr(0x01)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff))
 port.read(4)
 
+# Setup Output File
+startTime = time.time()
+f=open("IMUQuaternions.csv", "a+") #append to. create if not already existing
+f.write("New Session at Start Time: %d \n" % startTime)
+
 # Start Streaming
 send_command_bytes_usb(chr(0x55))
 port.read(4)
 
 # Read 20 packets
-while True:
-    data = port.read(32)
-    results = struct.unpack(">Ifffffff",data)
-
-    print("% 8d %f %7f %7f %7f   :   %7f %7f %7f" % results)
-
+try:
+    while True:
+        data = port.read(32)
+        results = struct.unpack(">Ifffffff",data)
+        f.write(str(time.time()-startTime) + ", ")
+        f.write("% 8d, %f, %7f, %7f, %7f,   :   %7f, %7f, %7f,\n" % results)
+        print(time.time()-startTime, end =" ")
+        print("% 8d %f %7f %7f %7f   :   %7f %7f %7f" % results)
+except KeyboardInterrupt:
+    send_command_bytes_usb(chr(0x56))
+    port.close()
+    f.write("\n")
+    f.close()
+    print()
+    print("Ended Streaming")
+    #raise
+except:
+    # report error and proceed
+    raise
 # Stop Streaming
-send_command_bytes_usb(chr(0x56))
-port.close()
+#send_command_bytes_usb(chr(0x56))
+#port.close()
