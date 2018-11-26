@@ -23,7 +23,7 @@ def send_command_bytes_usb(data):
     port.write(packet.encode('latin1'))
 
 # Prompt the user for the command port
-port_name = "/dev/ttyS4"
+port_name = "/dev/ttyS1"
 #input("Please input the com port of the device: ")
 
 # Create the serial port for communication
