@@ -23,15 +23,14 @@ def send_command_bytes_usb(data, response_header = False):
     # Construct the packet.
     # NOTE: If you want the response header use 0xf9;  
     #       for no response header (see below) use 0xf7
-    packet = b''
+    packet = chr(0xf7)
 
     if response_header:
         packet = chr(0xf9)
-    else:
-        packet = chr(0xf7)
 
     packet += data+chr(checksum % 256)
     port.write(packet.encode('latin-1'))
+
 
 parser = argparse.ArgumentParser(description='Read data from Yostlabs IMU')
 parser.add_argument('port_name',
@@ -56,17 +55,13 @@ port = serial.Serial(args.port_name,115200,timeout=1.5)
 ## Try to stop the output before doing any configuration
 #
 send_command_bytes_usb(chr(0x56))
-# send_command_bytes_usb(chr(0x56))
-# send_command_bytes_usb(chr(0x56))
-
-## Drain any remaining input
 
 # Set the header to contain the timestamp
 # From manual page 47:
 #   0xDD   : Set wired response header, takes 4 data bytes
 #   0x00   : Data byte 4, ignored
 #   0x00   : Data byte 3, ignored
-#   0x00   : Data byte 2, (no values set)
+#   0x00   : Data byte 2, ignored
 #   0x4A   : Data byte 1,
 #                   0x40 == prepend length of packet (1 bytes)
 #                   0x08 == prepend 1-byte checksum
@@ -84,7 +79,6 @@ send_command_bytes_usb(chr(0xdd)+chr(0x00)+chr(0x00)+chr(0x00)+chr(0x47))
 #   bytes 6-9   : duration -- how long the streaming will run for (set to 0xFFFFFFFF.  What does it mean?)
 #   bytes 10-13 : delay between start command and streaming data .. insert a short 100ms delay to allow
 #                 other resopnse headers to clear the system
-#send_command_bytes_usb(chr(0x52)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x0)+chr(0x0)+chr(0x0))
 send_command_bytes_usb(chr(0x52)+chr(0x0)+chr(0x0f)+chr(0x42)+chr(0x40)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
 
 # Set the streaming slots to stream the tared quaternion
