@@ -20,7 +20,8 @@ def send_command_bytes_usb(data):
     for d in data:
         checksum += ord(d)
 
-    # Construct the packet. NOTE: If you don't want the header use 0xf8 instead of 0xf9
+    # Construct the packet.
+    # NOTE: If you want the header use 0xf9;  for now header (see below) use 0xf7
     # > Manual doesn't discuss 0xf9 as a header.
     packet = chr(0xf7)+data+chr(checksum % 256)
     port.write(packet.encode('latin-1'))
@@ -58,7 +59,7 @@ send_command_bytes_usb(chr(0x56))
 #                   0x08 == prepend 1-byte checksum
 #                   0x02 == prepend timestanp in microseconds as 4-byte value
 #                   0x01 == prepend success/failure; non-zero == failure
-send_command_bytes_usb(chr(0xdd)+chr(0x0)+chr(0x0)+chr(0x00)+chr(0x00))
+send_command_bytes_usb(chr(0xdd)+chr(0x0)+chr(0x0)+chr(0x00)+chr(0x02))
 data = port.read(4)
 
 # Set the stream timing
@@ -78,12 +79,12 @@ port.read(4)
 #   0x01   : Read filtered, tared orientation(Euler Angles) --> 12 bytes
 #   0xff   : Must mean "don't stream anything"
 send_command_bytes_usb(chr(0x50)+chr(0x0)+chr(0x01)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff))
-port.read(4)
+#port.read(4)
 
 outfile = None
 if args.output:
-    outfile = File.open( args.output, 'w' )
-    outfile.write("# time,imu_time,quat1,quat2,quat3,quat4,roll,pitch,yaw")
+    outfile = open( args.output, 'w' )
+    outfile.write("#system_time,quat1,quat2,quat3,quat4,roll,pitch,yaw\n")
 
 # Start Streaming
 send_command_bytes_usb(chr(0x55))
@@ -102,7 +103,7 @@ while True:
     print("%f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(results) )
 
     if outfile:
-        outfile.write("%f,%8d,%f,%f,%f,%f,%f,%f,%f\n" % tuple(results) )
+        outfile.write("%f,%f,%f,%f,%f,%f,%f,%f\n" % tuple(results) )
 
 # Stop Streaming
 send_command_bytes_usb(chr(0x56))
