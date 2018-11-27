@@ -39,7 +39,7 @@ parser.add_argument('port_name',
 parser.add_argument('--output',
                     help='Save output to file')
 
-parser.add_argument('--output-raw',
+parser.add_argument('--raw-output',
                     help='Save raw output to file')
 
 
@@ -96,8 +96,8 @@ if args.output:
     outfile = open( args.output, 'w' )
     outfile.write("#system_time_sec,imu_time_usec,quat1,quat2,quat3,quat4,euler1,euler2,euler3\n")
 
-if args.output_raw:
-    rawfile = open( args.output_raw, 'wb' )
+if args.raw_output:
+    rawfile = open( args.raw_output, 'wb' )
 
 # Start Streaming
 send_command_bytes_usb(chr(0x55), response_header=True)
@@ -113,7 +113,7 @@ while True:
     if rawfile:
         rawfile.write(data)
 
-    # Header field  are packed lower bit to highest:
+    # Header fields  are packed lower bit to highest:
     #    success/failure, timestamp (4 bytes), echo, length
     hdr = struct.unpack(">cIcc", data)
     timestamp = hdr[1]
