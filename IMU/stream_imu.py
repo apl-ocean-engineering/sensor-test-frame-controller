@@ -113,7 +113,7 @@ while True:
     if rawfile:
         rawfile.write(data)
 
-    # Header bytes are packed in reverse order from lower bit to highest:
+    # Header field  are packed lower bit to highest:
     #    success/failure, timestamp (4 bytes), echo, length
     hdr = struct.unpack(">cIcc", data)
     timestamp = hdr[1]
