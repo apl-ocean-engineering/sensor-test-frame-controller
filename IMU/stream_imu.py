@@ -9,6 +9,9 @@
 import serial
 import struct
 import io
+import time
+
+import argparse
 
 def send_command_bytes_usb(data):
     global port
@@ -19,15 +22,30 @@ def send_command_bytes_usb(data):
 
     # Construct the packet. NOTE: If you don't want the header use 0xf8 instead of 0xf9
     # > Manual doesn't discuss 0xf9 as a header.
-    packet = chr(0xf9)+data+chr(checksum % 256)
-    port.write(packet.encode('latin1'))
+    packet = chr(0xf7)+data+chr(checksum % 256)
+    port.write(packet.encode('latin-1'))
+
+parser = argparse.ArgumentParser(description='Read data from Yostlabs IMU')
+parser.add_argument('port_name',
+                    help='Device file for serial port (e.g., /dev/ttyUSBS0)')
+
+parser.add_argument('--output',
+                    help='Save output to file')
+
+args = parser.parse_args()
 
 # Prompt the user for the command port
-port_name = "/dev/ttyS4"
+#port_name = "/dev/ttyS4"
 #input("Please input the com port of the device: ")
 
 # Create the serial port for communication
-port = serial.Serial(port_name,115200,timeout=1)
+port = serial.Serial(args.port_name,115200,timeout=1)
+
+## Try to stop the output before doing any configuration
+#
+send_command_bytes_usb(chr(0x56))
+# send_command_bytes_usb(chr(0x56))
+# send_command_bytes_usb(chr(0x56))
 
 # Set the header to contain the timestamp
 # From manual page 47:
@@ -38,9 +56,10 @@ port = serial.Serial(port_name,115200,timeout=1)
 #   0x4A   : Data byte 1,
 #                   0x40 == prepend length of packet (1 bytes)
 #                   0x08 == prepend 1-byte checksum
-#                   0x02 == prepend timestand in microseconds as 4-byte value
-send_command_bytes_usb(chr(0xdd)+chr(0x0)+chr(0x0)+chr(0x00)+chr(0x02))
-port.read(4)
+#                   0x02 == prepend timestanp in microseconds as 4-byte value
+#                   0x01 == prepend success/failure; non-zero == failure
+send_command_bytes_usb(chr(0xdd)+chr(0x0)+chr(0x0)+chr(0x00)+chr(0x00))
+data = port.read(4)
 
 # Set the stream timing
 # From manual page 39:
@@ -61,16 +80,29 @@ port.read(4)
 send_command_bytes_usb(chr(0x50)+chr(0x0)+chr(0x01)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff))
 port.read(4)
 
+outfile = None
+if args.output:
+    outfile = File.open( args.output, 'w' )
+    outfile.write("# time,imu_time,quat1,quat2,quat3,quat4,roll,pitch,yaw")
+
 # Start Streaming
 send_command_bytes_usb(chr(0x55))
-port.read(4)
 
 # Read 20 packets
 while True:
-    data = port.read(32)
-    results = struct.unpack(">Ifffffff",data)
+    now = time.time()
 
-    print("% 8d %f %7f %7f %7f   :   %7f %7f %7f" % results)
+    data = port.read(28)
+    results = struct.unpack(">fffffff",data)
+    #results = struct.unpack(">Ifffffff",data)
+    results = [now] + list(results)
+
+    #print(results)
+
+    print("%f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(results) )
+
+    if outfile:
+        outfile.write("%f,%8d,%f,%f,%f,%f,%f,%f,%f\n" % tuple(results) )
 
 # Stop Streaming
 send_command_bytes_usb(chr(0x56))
