@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright 2018 UW-APL
 # See LICENSE
 
-from yostlabs.client import ImuClient
+from imu import ImuClient
 import argparse
 import pika
 import logging

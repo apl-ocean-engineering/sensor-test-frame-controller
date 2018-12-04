@@ -7,7 +7,7 @@ import sys
 import logging
 import time
 
-import yostlabs.imu_data_pb2 as imu_api
+import imu.imu_data_pb2 as imu_api
 
 from .base import Base
 
@@ -43,20 +43,22 @@ class ImuServer(Base):
     def close(self):
         self.connection.close()
 
-    def send(self,euler):
+    def process_imu_data(self,imu_data):
         # Make an IMU data packet
         packet = imu_api.EulerAngles()
-        packet.timestamp = time.monotonic()
+        packet.timestamp = imu_data.system_timestamp
+
         packet.sequence = self.sequence
         self.sequence += 1
 
-        packet.roll = euler['roll']
-        packet.pitch = euler['pitch']
-        packet.yaw  = euler['yaw']
+        packet.roll = imu_data.euler[0]
+        packet.pitch = imu_data.euler[1]
+        packet.yaw  = imu_data.euler[2]
 
         self.channel.basic_publish(exchange='yostlabs',
                                   routing_key=self.full_name(),
                                   body=packet.SerializeToString())
+
         self.logger.info(" [x] Sent imu message %d" % packet.sequence)
 
     def run(self):
@@ -65,6 +67,6 @@ class ImuServer(Base):
         # def callback(euler):
         #     self.send()
 
-        self.imu.add_callback( self.send )
+        self.imu.add_callback( self.process_imu_data )
 
         self.imu.run()

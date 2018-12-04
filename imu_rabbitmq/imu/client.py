@@ -7,7 +7,7 @@ import sys
 import logging
 import time
 
-import yostlabs.imu_data_pb2 as imu_api
+import imu.imu_data_pb2 as imu_api
 
 from .base import Base
 
