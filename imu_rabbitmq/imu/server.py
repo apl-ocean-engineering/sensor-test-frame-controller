@@ -59,7 +59,7 @@ class ImuServer(Base):
                                   routing_key=self.full_name(),
                                   body=packet.SerializeToString())
 
-        self.logger.info(" [x] Sent imu message %d" % packet.sequence)
+        self.logger.info(" [x] Sent imu message %d from %f" % (packet.sequence, packet.timestamp) )
 
     def run(self):
         self.logger.warning("IMU Server %s running ..." % self.name)

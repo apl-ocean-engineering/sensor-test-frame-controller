@@ -3,6 +3,8 @@
 #   starting on pg 23
 #
 
+from __future__ import absolute_import
+
 import logging
 import time
 
@@ -10,7 +12,7 @@ import serial
 import struct
 import io
 
-from .imu_data import ImuData
+from imu.imu_data import ImuData
 
 # A brief example to stream the tared quaternion
 # Other commands can be found at: https://yostlabs.com/wp/wp-content/uploads/pdf/3-Space-Sensor-Family-User-Manual.pdf
@@ -119,8 +121,6 @@ class Imu:
 
             # Read 20 packets
             while True:
-                now = time.time()
-
                 # Header
                 data = self.port.read(7)
 
@@ -136,14 +136,13 @@ class Imu:
 
                 imu_data = ImuData()
 
-                imu_data.system_time = now
-                imu_data.imu_time   =  timestamp
+                imu_data.system_timestamp = time.time()
+                imu_data.imu_timesstamp   =  timestamp
                 imu_data.euler       = results[4:]
                 imu_data.quaternions = results[0:3]
 
                 for c in self.callbacks:
                     c(imu_data)
-
 
 
 
