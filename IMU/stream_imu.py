@@ -8,9 +8,10 @@
 # print(struct.unpack(">ffff",data[4:20]))
 import serial
 import struct
+import sys
+import signal
 import io
 import time
-
 import argparse
 
 def send_command_bytes_usb(data, response_header = False):
@@ -31,9 +32,14 @@ def send_command_bytes_usb(data, response_header = False):
     packet += data+chr(checksum % 256)
     port.write(packet.encode('latin-1'))
 
+def signal_handler(sig, frame):
+    print("Cntrl C")
+    #send_command_bytes_usb(chr(0x56))
+    port.close()
+    sys.exit(0)
 
 parser = argparse.ArgumentParser(description='Read data from Yostlabs IMU')
-parser.add_argument('port_name',
+parser.add_argument('--port_name',
                     help='Device file for serial port (e.g., /dev/ttyUSBS0)')
 
 parser.add_argument('--output',
@@ -50,7 +56,9 @@ args = parser.parse_args()
 #input("Please input the com port of the device: ")
 
 # Create the serial port for communication
-port = serial.Serial(args.port_name,115200,timeout=1.5)
+#port_name = args.port_name
+port_name = "COM5"
+port = serial.Serial(port_name,115200,timeout=1.5)
 
 ## Try to stop the output before doing any configuration
 #
@@ -79,7 +87,9 @@ send_command_bytes_usb(chr(0xdd)+chr(0x00)+chr(0x00)+chr(0x00)+chr(0x47))
 #   bytes 6-9   : duration -- how long the streaming will run for (set to 0xFFFFFFFF.  What does it mean?)
 #   bytes 10-13 : delay between start command and streaming data .. insert a short 100ms delay to allow
 #                 other resopnse headers to clear the system
-send_command_bytes_usb(chr(0x52)+chr(0x0)+chr(0x0f)+chr(0x42)+chr(0x40)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
+#send_command_bytes_usb(chr(0x52)+chr(0x0)+chr(0x0f)+chr(0x42)+chr(0x40)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
+send_command_bytes_usb(chr(0x52)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
+
 
 # Set the streaming slots to stream the tared quaternion
 # From manualpage 39:
@@ -107,6 +117,7 @@ port.read(128)
 # Read 20 packets
 while True:
     now = time.time()
+    #signal.signal(signal.SIGINT, signal_handler)
 
     # Header
     data = port.read(7)
