@@ -10,8 +10,9 @@ import struct
 import io
 import time
 import argparse
+import queue
 
-class IMU:
+class IMU():
     def __init__(self, port_num, frequency=1):
         """Example of docstring on the __init__ method.
 
@@ -52,13 +53,40 @@ class IMU:
     def send_IMU_data(self, cmd):
         self.send_command_bytes_usb(cmd)
     
-    def start_stream(self):
+    def start_stream_to_queue(self, with_header=True):
+        """
+
+        The start_stream method sends the command that causes the IMU to 
+        start streaming data, and drains any residual bytes in the buffer. It does not handle any configuration of the 
+        stream settings, aside from setting whether or not to include a
+        response header, which is ______. #TODO
+        
+
+        Args:
+            with_header (Boolean, optional): Determines whether or not to 
+                stream with a response header. Defaults to True.
+
+        """
         # Start Streaming
-        self.send_command_bytes_usb(chr(0x55), response_header=True)
+        self.send_command_bytes_usb(chr(0x55), response_header=with_header)
         # Drain any residual bytes
         self.port.read(128)
 
     def send_command_bytes_usb(self, data, response_header = False):
+        """
+
+        The send_command_bytes_usb method is a general command that takes data and 
+        packages it into a form that the YOST Labs IMU can understand. The 
+        data is in the format _______, and is repackaged as ___________. It
+        also handles whether or not to include a response_header, which is
+        set to False by default.
+
+        Args:
+            data (str): Description of `param1`.
+            response_header (Boolean, optional): Determines whether or not to 
+                stream with a response header. Defaults to False.
+
+        """
         checksum = 0
 
         for d in data:
@@ -75,9 +103,21 @@ class IMU:
         packet += data+chr(checksum % 256)
         self.port.write(packet.encode('latin-1'))
 
-    def stop_streaming(self):
+    def stop_streaming(self, close_port=False):
+        """
+
+        The stop_streaming method simply sends the stop stream command to the
+        IMU, and can also close the port if specified.
+
+        Args:
+            close_port (Boolean, optional): If set to be True, function will 
+                also close port. Defaults to False.
+
+
+        """
         self.send_command_bytes_usb(chr(0x56))
-        self.port.close()
+        if close_port:
+            self.port.close()
 
     def _init_port(self, frequency):
         self.send_IMU_data(chr(0x56))
