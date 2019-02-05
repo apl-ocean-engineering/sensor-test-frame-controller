@@ -39,7 +39,6 @@ class IMU():
         Init Port
         '''
         self._init_port(frequency)
-        self.start_stream()
     
     def get_IMU_data(self):
         header = self.port.read(7)
@@ -53,7 +52,7 @@ class IMU():
     def send_IMU_data(self, cmd):
         self.send_command_bytes_usb(cmd)
     
-    def start_stream_to_queue(self, with_header=True):
+    def start_stream_to_queue(self, q, with_header=True):
         """
 
         The start_stream method sends the command that causes the IMU to 
@@ -71,6 +70,16 @@ class IMU():
         self.send_command_bytes_usb(chr(0x55), response_header=with_header)
         # Drain any residual bytes
         self.port.read(128)
+        while True:
+            header, data = self.get_IMU_data()
+            timestamp = header[1]
+            """
+            DO STUFF
+            """
+            #print("imu data: ", data)
+            #print("%f,%d,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
+            #print("% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data) )
+            q.put((header, data))
 
     def send_command_bytes_usb(self, data, response_header = False):
         """
@@ -119,15 +128,33 @@ class IMU():
         if close_port:
             self.port.close()
 
-    def _init_port(self, frequency):
-        self.send_IMU_data(chr(0x56))
-        #TODO make this friendly
-        if frequency == 10:
-            self.send_IMU_data(chr(0xdd)+chr(0x00)+chr(0x00)+chr(0x00)+chr(0x47))
-        self.send_IMU_data(chr(0x52)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
-        self.send_IMU_data(chr(0x50)+chr(0x0)+chr(0x01)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff))
+    def _init_port(self, frequency=10):
+        self.send_IMU_data(chr(0x56)) # Try to stop the output before doing any configuration
+        self.send_IMU_data(chr(0xdd)+chr(0x00)+chr(0x00)+chr(0x00)+chr(0x47)) # Set the header to contain the timestamp        
+        self.setStreamTiming(frequency) # Currently only supports 1Hz and 10Hz
+        self.setStreamSlots() # Set the streaming slots to stream the tared quaternion
 
-        #self.send_command_bytes_usb(chr(0x56))
-        #self.send_command_bytes_usb(chr(0xdd)+chr(0x00)+chr(0x00)+chr(0x00)+chr(0x47))
-        #self.send_command_bytes_usb(chr(0x52)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
-        #self.send_command_bytes_usb(chr(0x50)+chr(0x0)+chr(0x01)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff))
+    def setStreamTiming(self, frequency):
+        # Set the stream timing
+        # From manual page 39:
+        #   0x52   : Set streaming timing, takes 3 x 4-byte unsigned ints, all in microsecond
+        #   bytes 1-5   : interval (don't know what these mean, though 0x000003E8 == 1000 us = 1 ms)
+        #               :   0x186A0 = 100,000 = 10Hz
+        #               :   0xF4240 = 1,000,000 = 1Hz
+        #   bytes 6-9   : duration -- how long the streaming will run for (set to 0xFFFFFFFF.  What does it mean?)
+        #   bytes 10-13 : delay between start command and streaming data .. insert a short 100ms delay to allow
+        #                 other resopnse headers to clear the system
+
+        if frequency == 1:
+            self.send_IMU_data(chr(0x52)+chr(0x0)+chr(0x0F)+chr(0x42)+chr(0x40)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
+        elif frequency == 10:
+            self.send_IMU_data(chr(0x52)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
+
+    def setStreamSlots(self):
+        # Set the streaming slots to stream the tared quaternion
+        # From manualpage 39:
+        #   0x50   : Set streaming slots, takes 8 bytes, presumably 8 "slots"
+        #   0x00   : Read filtered, tared orientation(Quaternion) --> 16 bytes
+        #   0x01   : Read filtered, tared orientation(Euler Angles) --> 12 bytes
+        #   0xff   : Must mean "don't stream anything"
+        self.send_IMU_data(chr(0x50)+chr(0x0)+chr(0x01)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)) 
