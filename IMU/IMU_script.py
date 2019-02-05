@@ -13,10 +13,8 @@ import sys
 import signal
 import csv
 import matplotlib
-matplotlib.use("tkAgg")
 import matplotlib.pyplot as plt
 import numpy as np
-
 
 # def run(name,q):
 #     while True:
@@ -40,24 +38,19 @@ def signal_handler(sig, frame):
     quit()
     #send_command_bytes_usb(chr(0x56))
 
-plot_window = 20
-y_var = np.array(np.zeros([plot_window]))
-plt.ion()
-fig, ax = plt.subplots()
-line, = ax.plot(y_var)
 
-def plot_and_log(y_var, values = []):
+def plot_and_log(values = []):
     with open("test_data.csv","a") as f:
             writer = csv.writer(f,delimiter=",")
             writer.writerow([time.time(),values[2]])
-    y_var = np.append(y_var,values[2])
-    y_var = y_var[1:plot_window+1]
-    line.set_ydata(y_var)
-    ax.relim()
-    ax.autoscale_view()
-    fig.canvas.draw()
-    fig.canvas.flush_events()
-    print(y_var)
+    #plt.axis([0, 10, 0, 1])
+    plt.autoscale()
+    y = np.random.random()
+    plt.scatter(time.time(), values[0])
+    plt.pause(0.05)
+
+    plt.show()
+
 
 IMUs = []
 
@@ -75,7 +68,8 @@ if __name__ == '__main__':
         if q1.not_empty:
             #print("% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
             print(data1)
-            plot_and_log(y_var, data1)
+            plot_and_log(data1)
+        print("finishedPrinting")
     '''
     q2 = queue.Queue()
     t2 = threading.Thread(target=run, args = ("COM4", q2,))
