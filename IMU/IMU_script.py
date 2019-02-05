@@ -42,14 +42,12 @@ def signal_handler(sig, frame):
 def plot_and_log(values = []):
     with open("test_data.csv","a") as f:
             writer = csv.writer(f,delimiter=",")
-            writer.writerow([time.time(),values[2]])
+            writer.writerow([time.time(),values[5]])
     #plt.axis([0, 10, 0, 1])
     plt.autoscale()
-    y = np.random.random()
     plt.scatter(time.time(), values[0])
-    plt.pause(0.05)
-
-    plt.show()
+    plt.pause(0.0001)
+#    plt.show()
 
 
 IMUs = []
@@ -69,7 +67,7 @@ if __name__ == '__main__':
             #print("% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
             print(data1)
             plot_and_log(data1)
-        print("finishedPrinting")
+        #print("finishedPrinting")
     '''
     q2 = queue.Queue()
     t2 = threading.Thread(target=run, args = ("COM4", q2,))
