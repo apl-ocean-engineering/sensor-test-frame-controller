@@ -16,6 +16,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
+timer = time.time()
+
 # def run(name,q):
 #     while True:
 #         header, data = imu.get_IMU_data()
@@ -40,15 +42,21 @@ def signal_handler(sig, frame):
 
 
 def plot_and_log(values = []):
+    global timer
     with open("test_data.csv","a") as f:
             writer = csv.writer(f,delimiter=",")
-            writer.writerow([time.time(),values[5]])
+            writer.writerow([time.time(),values[0]])
+    
     #plt.axis([0, 10, 0, 1])
     plt.autoscale()
     plt.scatter(time.time(), values[0])
+    if time.time() - timer > 20 :
+        print("clearing")
+        plt.cla()
+        timer = time.time()
     plt.pause(0.0001)
 #    plt.show()
-
+# Potential Better way here: https://pythonprogramming.net/python-matplotlib-live-updating-graphs/
 
 IMUs = []
 
@@ -65,7 +73,7 @@ if __name__ == '__main__':
         #TODO: Exit gracefully 
         if q1.not_empty:
             #print("% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
-            print(data1)
+            #print(data1)
             plot_and_log(data1)
         #print("finishedPrinting")
     '''
