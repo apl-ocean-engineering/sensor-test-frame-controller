@@ -77,10 +77,10 @@ if __name__ == '__main__':
     q2 = queue.Queue()
     print("Started")
     # global IMUs
-    IMUs.append(IMU("ttyS1", frequency=10))
-    IMUs.append(IMU("ttyS2", frequency=10))
+    IMUs.append(IMU("/dev/ttyS1", frequency=10))
+    IMUs.append(IMU("/dev/ttyS4", frequency=10))
     t1 = threading.Thread(target=IMUs[0].start_stream_to_queue, args=(q1,))
-    t2 = threading.Thread(target=IMUs[0].start_stream_to_queue, args=(q2,))
+    t2 = threading.Thread(target=IMUs[1].start_stream_to_queue, args=(q2,))
     t1.start()
     t2.start()
     signal.signal(signal.SIGINT, signal_handler)

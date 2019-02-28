@@ -56,8 +56,8 @@ args = parser.parse_args()
 #input("Please input the com port of the device: ")
 
 # Create the serial port for communication
-#port_name = args.port_name
-port_name = "COM5"
+port_name = args.port_name
+#port_name = "COM5"
 port = serial.Serial(port_name,115200,timeout=1.5)
 
 ## Try to stop the output before doing any configuration

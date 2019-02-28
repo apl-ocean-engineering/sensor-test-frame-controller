@@ -50,7 +50,7 @@ def send_command_bytes_usb(data):
     # Construct the packet. NOTE: If you don't want the header use 0xf8 instead of 0xf9
     # > Manual doesn't discuss 0xf9 as a header.
     packet = chr(0xf9)+data+chr(checksum % 256)
-    port.write(packet.encode('latin1'))
+    port.write(packet.encode('latin-1'))
 
 # Prompt the user for the command port
 print(serial_ports())
@@ -108,7 +108,7 @@ try:
         results = struct.unpack(">Ifffffff",data)
         f.write(str(time.time()-startTime) + ", ")
         f.write("% 8d, %f, %7f, %7f, %7f,   :   %7f, %7f, %7f,\n" % results)
-        print(time.time()-startTime, end =" ")
+        print(time.time()-startTime, " ")
         print("% 8d %f %7f %7f %7f   :   %7f %7f %7f" % results)
 except KeyboardInterrupt:
     send_command_bytes_usb(chr(0x56))
