@@ -41,20 +41,31 @@ def signal_handler(sig, frame):
     #send_command_bytes_usb(chr(0x56))
 
 
-def plot_and_log(values = []):
+def plot_and_log(time_data = [], values1 = [], values2 = [], values3 = []):
     global timer
+    """
     with open("test_data.csv","a") as f:
             writer = csv.writer(f,delimiter=",")
             writer.writerow([time.time(),values[0]])
+    """
     
     #plt.axis([0, 10, 0, 1])
     plt.autoscale()
-    plt.scatter(time.time(), values[0])
-    if time.time() - timer > 20 :
-        print("clearing")
-        plt.cla()
-        timer = time.time()
-    plt.pause(0.0001)
+
+    plt.scatter(time_data, values1)
+    plt.scatter(time_data, values2)
+    plt.scatter(time_data, values3)
+    #if time.time() - timer > 20 :
+        #print("clearing")
+    if len(values1) > 25:
+        values1.pop(0)
+        values2.pop(0)
+        values3.pop(0)
+        time_data.pop(0)
+        
+        #timer = time.time()
+    plt.pause(0.000001)
+    plt.cla()
 #    plt.show()
 # Potential Better way here: https://pythonprogramming.net/python-matplotlib-live-updating-graphs/
 
@@ -68,13 +79,26 @@ if __name__ == '__main__':
     t1 = threading.Thread(target=IMUs[0].start_stream_to_queue, args=(q1,))
     t1.start()
     signal.signal(signal.SIGINT, signal_handler)
+    full_data1 = []
+    full_data2 = []
+    full_data3 = []
+    time_data = []
+    plotting = True
     while True:
         header1, data1 = q1.get()
+        while q1.qsize() > 0:
+            header1, data1 = q1.get() #Will be problematic when logging
         #TODO: Exit gracefully 
         if q1.not_empty:
             #print("% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
             #print(data1)
-            plot_and_log(data1)
+            if plotting:
+                full_data1.append(data1[0])
+                full_data2.append(data1[1])
+                full_data3.append(data1[2])
+                time_data.append(time.time())
+                plot_and_log(time_data, full_data1, full_data2, full_data3)
+            print(str(q1.qsize()))
         #print("finishedPrinting")
     '''
     q2 = queue.Queue()

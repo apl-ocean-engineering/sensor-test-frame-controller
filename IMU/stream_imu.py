@@ -84,11 +84,15 @@ send_command_bytes_usb(chr(0xdd)+chr(0x00)+chr(0x00)+chr(0x00)+chr(0x47))
 #   bytes 1-5   : interval (don't know what these mean, though 0x000003E8 == 1000 us = 1 ms)
 #               :   0x186A0 = 100,000 = 10Hz
 #               :   0xF4240 = 1,000,000 = 1Hz
-#   bytes 6-9   : duration -- how long the streaming will run for (set to 0xFFFFFFFF.  What does it mean?)
+#   bytes 6-9   : duration -- how long the streaming will run for (set to 0xFFFFFFFF, which means constantly stream)
 #   bytes 10-13 : delay between start command and streaming data .. insert a short 100ms delay to allow
-#                 other resopnse headers to clear the system
-#send_command_bytes_usb(chr(0x52)+chr(0x0)+chr(0x0f)+chr(0x42)+chr(0x40)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
-send_command_bytes_usb(chr(0x52)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
+#                 other response headers to clear the system
+#1Hz 
+send_command_bytes_usb(chr(0x52)+chr(0x0)+chr(0x0f)+chr(0x42)+chr(0x40)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
+#10Hz 
+#send_command_bytes_usb(chr(0x52)+chr(0x0)+chr(0x1)+chr(0x86)+chr(0x0a)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
+#1000Hz
+#send_command_bytes_usb(chr(0x52)+chr(0x0)+chr(0x00)+chr(0x03)+chr(0xE8)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
 
 
 # Set the streaming slots to stream the tared quaternion

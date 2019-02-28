@@ -72,7 +72,7 @@ class IMU():
         self.port.read(128)
         while True:
             header, data = self.get_IMU_data()
-            timestamp = header[1]
+            #timestamp = header[1]
             """
             DO STUFF
             """
@@ -131,8 +131,8 @@ class IMU():
     def _init_port(self, frequency=10):
         self.send_IMU_data(chr(0x56)) # Try to stop the output before doing any configuration
         self.send_IMU_data(chr(0xdd)+chr(0x00)+chr(0x00)+chr(0x00)+chr(0x47)) # Set the header to contain the timestamp        
-        self.setStreamTiming(frequency) # Currently only supports 1Hz and 10Hz
         self.setStreamSlots() # Set the streaming slots to stream the tared quaternion
+        self.setStreamTiming(frequency) # Currently only supports 1Hz and 10Hz
 
     def setStreamTiming(self, frequency):
         # Set the stream timing
@@ -148,7 +148,11 @@ class IMU():
         if frequency == 1:
             self.send_IMU_data(chr(0x52)+chr(0x0)+chr(0x0F)+chr(0x42)+chr(0x40)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
         elif frequency == 10:
-            self.send_IMU_data(chr(0x52)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
+            #self.send_IMU_data(chr(0x52)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
+            self.send_IMU_data(chr(0x52)+chr(0x0)+chr(0x1)+chr(0x86)+chr(0x0a)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
+            #self.send_IMU_data(chr(0x52) +chr(0x186A0) +chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
+        elif frequency == 1000:
+            self.send_IMU_data(chr(0x52)+chr(0x0)+chr(0x00)+chr(0x03)+chr(0xE8)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0))
 
     def setStreamSlots(self):
         # Set the streaming slots to stream the tared quaternion
@@ -158,3 +162,45 @@ class IMU():
         #   0x01   : Read filtered, tared orientation(Euler Angles) --> 12 bytes
         #   0xff   : Must mean "don't stream anything"
         self.send_IMU_data(chr(0x50)+chr(0x0)+chr(0x01)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)) 
+
+'''
+Streaming Commands
+ 0(0x00), Read tared orientation as quaternion
+ 1(0x01), Read tared orientation as euler angles
+ 2(0x02), Read tared orientation as rotation matrix
+ 3(0x03), Read tared orientation as axis angle
+ 4(0x04), Read tared orientation as two vector
+ 5(0x05), Read difference quaternion
+ 6(0x06), Read untared orientation as quaternion
+ 7(0x07), Read untared orientation as euler angles
+ 8(0x08), Read untared orientation as rotation matrix
+ 9(0x09), Read untared orientation as axis angle
+ 10(0x0a), Read untared orientation as two vector
+ 11(0x0b), Read tared two vector in sensor frame
+ 12(0x0c), Read untared two vector in sensor frame
+ 32(0x20), Read all normalized component sensor data
+ 33(0x21), Read normalized gyroscope vector
+ 34(0x22), Read normalized accelerometer vector
+ 35(0x23), Read normalized compass vector
+ 37(0x25), Read all corrected component sensor data
+ 38(0x26), Read corrected gyroscope vector
+ 39(0x27), Read corrected accelerometer vector
+ 40(0x28), Read corrected compass vector
+ 41(0x29), Read corrected linear acceleration
+ 43(0x2B) Read temperature C
+ 44(0x2C), Read temperature F
+ 45(0x2D), Read confidence factor
+ 64(0x40), Read all raw component sensor data
+ 65(0x41), Read raw gyroscope vector
+ 66(0x42), Read raw accelerometer vector
+ 67(0x43), Read raw compass vector
+ 201(0xc9), Read battery voltage
+ 202(0xca), Read battery percentage
+ 203(0xcb), Read battery status
+ 250(0xfa), Read button state
+ 255(0xff), No command
+'''
+
+
+
+        
