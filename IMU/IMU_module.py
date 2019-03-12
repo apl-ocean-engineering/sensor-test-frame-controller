@@ -32,6 +32,9 @@ class IMU():
             param3 (:obj:`list` of :obj:`str`): Description of `param3`.
 
         """
+        self.q = queue.Queue()
+        self.running = True
+
         self.port_num = port_num
         self.port = serial.Serial(port_num, 115200, timeout=1.5)
         '''
@@ -60,7 +63,7 @@ class IMU():
         self.send_command_bytes_usb(cmd)
         self.port.read(4)
     
-    def start_stream_to_queue(self, q, with_header=True):
+    def start_stream_to_queue(self, with_header=True):
         """
 
         The start_stream method sends the command that causes the IMU to 
@@ -78,7 +81,7 @@ class IMU():
         self.send_command_bytes_usb(chr(0x55), response_header=with_header)
         # Drain any residual bytes
         self.port.reset_input_buffer()
-        while True:
+        while self.running:
             header, data = self.get_IMU_data()
             #timestamp = header[1]
             """
@@ -87,7 +90,7 @@ class IMU():
             #print("imu data: ", data)
             #print("%f,%d,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
             #print("% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data) )
-            q.put((header, data))
+            self.q.put((header, data))
 
     def send_command_bytes_usb(self, data, response_header = False):
         """
@@ -132,6 +135,7 @@ class IMU():
 
 
         """
+        self.running = False
         self.send_command_bytes_usb(chr(0x56))
         if close_port:
             self.port.close()
@@ -149,7 +153,9 @@ class IMU():
         
         delayTime = chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0)
         duration = chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)
-
+        #TODO: Get this working
+        # freqInterval = hex(1000000.0 / frequency)
+        
         freqInterval = chr(0x0)
         if frequency == 1:
             freqInterval = chr(0x0)+chr(0x0F)+chr(0x42)+chr(0x40)
@@ -157,6 +163,7 @@ class IMU():
             freqInterval = chr(0x0)+chr(0x1)+chr(0x86)+chr(0x0A)
         elif frequency == 1000:
             freqInterval = chr(0x0)+chr(0x00)+chr(0x03)+chr(0xE8)
+        
 
         self.send_IMU_data(chr(0x52)+freqInterval+duration+delayTime)
 

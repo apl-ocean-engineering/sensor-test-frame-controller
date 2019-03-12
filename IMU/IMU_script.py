@@ -12,11 +12,12 @@ import time
 import sys
 import signal
 import csv
-'''
+from pyquaternion import Quaternion
+
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-'''
+
 timer = time.time()
 
 def signal_handler(sig, frame):
@@ -29,82 +30,83 @@ def signal_handler(sig, frame):
     #quit()
     #send_command_bytes_usb(chr(0x56))
 
-'''
-def plot_and_log(time_data = [], values1 = [], values2 = [], values3 = []):
-    global timer
+
+def plot_and_log(time_data = [], values1 = [], values2 = [], values3 = [], values4 = []):
+    #global timer
     """
     with open("test_data.csv","a") as f:
             writer = csv.writer(f,delimiter=",")
             writer.writerow([time.time(),values[0]])
     """
-    
-    #plt.axis([0, 10, 0, 1])
     plt.autoscale()
 
     plt.scatter(time_data, values1)
     plt.scatter(time_data, values2)
     plt.scatter(time_data, values3)
-    #if time.time() - timer > 20 :
-        #print("clearing")
+    plt.scatter(time_data, values4)
+    
     if len(values1) > 25:
         values1.pop(0)
         values2.pop(0)
         values3.pop(0)
+        values4.pop(0)
         time_data.pop(0)
-        
         #timer = time.time()
     plt.pause(0.000001)
     plt.cla()
-#    plt.show()
 # Potential Better way here: https://pythonprogramming.net/python-matplotlib-live-updating-graphs/
-'''
+
+
 IMUs = []
+Threads = []
 
 if __name__ == '__main__':
-    q1 = queue.Queue()
-    q2 = queue.Queue()
     print("Started")
-    # global IMUs
-    #IMUs.append(IMU("/dev/ttyS1", frequency=10))
-    IMUs.append(IMU("COM5", frequency=1000))
-    #IMUs.append(IMU("/dev/ttyS4", frequency=10))
-    t1 = threading.Thread(target=IMUs[0].start_stream_to_queue, args=(q1,))
-    #t2 = threading.Thread(target=IMUs[1].start_stream_to_queue, args=(q2,))
-    t1.start()
-#    t2.start()
     signal.signal(signal.SIGINT, signal_handler)
+    IMUs.append(IMU("COM5", frequency=1000))
+    #IMUs.append(IMU("/dev/ttyS1", frequency=100))
+    #IMUs.append(IMU("/dev/ttyS4", frequency=100))
+    for imu in IMUs:
+        Threads.append(threading.Thread(target=imu.start_stream_to_queue, args=(True,)))
+    
+    for t in Threads:
+        t.start()
+    
+    # Quaternions
+    targetQuat = Quaternion()
+    referenceQuat = Quaternion()
+    relativeQuat = Quaternion()
+
+    # Plotter variables
+    plotting = False
     full_data1 = []
     full_data2 = []
     full_data3 = []
+    full_data4 = []
     time_data = []
-    plotting = False
+
+
     while True:
-        header1, data1 = q1.get()
-        #header2, data2 = q2.get()
+        #TODO: not sure how to turn into for loop. or if even necessary
+        header1, data1 = IMUs[0].q.get()
+        #header2, data2 = IMUS[1].q.get()
         
-        """
-        header2, data2 = q2.get()
-        while q1.qsize() > 0:
-            header1, data1 = q1.get() #Will be problematic when logging
-        while q2.qsize() > 0:
-            header2, data2 = q2.get() #Will be problematic when logging
-        """
-        #TODO: Exit gracefully 
-        if q1.not_empty:
+        for imu in IMUs: # For when loop is slowed down by anything (like plotting)
+            while imu.q.qsize() > 0:
+                header1, data1 = imu.q.get()
+
+        if IMUs[0].q.not_empty:
             #print("data 1: ", "% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
             print(header1)
-            print(data1)
+            for i in range(4) :
+                targetQuat[i] = data1[i]
+            relativeQuat = targetQuat / referenceQuat
+            print(targetQuat)
+            print(referenceQuat)
             if plotting:
-                full_data1.append(data1[0])
-                full_data2.append(data1[1])
-                full_data3.append(data1[2])
+                full_data1.append(relativeQuat[0])
+                full_data2.append(relativeQuat[1])
+                full_data3.append(relativeQuat[2])
+                full_data4.append(relativeQuat[3])
                 time_data.append(time.time())
-                #plot_and_log(time_data, full_data1, full_data2, full_data3)
-            #print(str(q1.qsize()))
-        #print("finishedPrinting")
-        #if q2.not_empty:
-        #    print("data 2: ","% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data2) )
-    '''
-    q2 = queue.Queue()
-    t2 = threading.Thread(target=run, args = ("COM4", q2,))
-    '''
+                plot_and_log(time_data, full_data1, full_data2, full_data3, full_data4)
