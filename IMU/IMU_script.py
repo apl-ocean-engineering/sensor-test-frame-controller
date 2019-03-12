@@ -13,11 +13,11 @@ import sys
 import signal
 import csv
 from pyquaternion import Quaternion
-
+"""
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-
+"""
 timer = time.time()
 
 def signal_handler(sig, frame):
@@ -30,14 +30,14 @@ def signal_handler(sig, frame):
     #quit()
     #send_command_bytes_usb(chr(0x56))
 
-
+"""
 def plot_and_log(time_data = [], values1 = [], values2 = [], values3 = [], values4 = []):
     #global timer
-    """
+    
     with open("test_data.csv","a") as f:
             writer = csv.writer(f,delimiter=",")
             writer.writerow([time.time(),values[0]])
-    """
+    
     plt.autoscale()
 
     plt.scatter(time_data, values1)
@@ -54,8 +54,8 @@ def plot_and_log(time_data = [], values1 = [], values2 = [], values3 = [], value
         #timer = time.time()
     plt.pause(0.000001)
     plt.cla()
+    """
 # Potential Better way here: https://pythonprogramming.net/python-matplotlib-live-updating-graphs/
-
 
 IMUs = []
 Threads = []
@@ -63,9 +63,9 @@ Threads = []
 if __name__ == '__main__':
     print("Started")
     signal.signal(signal.SIGINT, signal_handler)
-    IMUs.append(IMU("COM5", frequency=1000))
-    #IMUs.append(IMU("/dev/ttyS1", frequency=100))
-    #IMUs.append(IMU("/dev/ttyS4", frequency=100))
+    #IMUs.append(IMU("COM5", frequency=1000))
+    IMUs.append(IMU("/dev/ttyS1", frequency=100))
+    IMUs.append(IMU("/dev/ttyS4", frequency=100))
     for imu in IMUs:
         Threads.append(threading.Thread(target=imu.start_stream_to_queue, args=(True,)))
     
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     relativeQuat = Quaternion()
 
     # Plotter variables
-    plotting = False
+    plotting = True
     full_data1 = []
     full_data2 = []
     full_data3 = []
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     while True:
         #TODO: not sure how to turn into for loop. or if even necessary
         header1, data1 = IMUs[0].q.get()
-        #header2, data2 = IMUS[1].q.get()
+        header2, data2 = IMUs[1].q.get()
         
         for imu in IMUs: # For when loop is slowed down by anything (like plotting)
             while imu.q.qsize() > 0:
@@ -100,6 +100,8 @@ if __name__ == '__main__':
             print(header1)
             for i in range(4) :
                 targetQuat[i] = data1[i]
+            for i in range(4) :
+                referenceQuat[i] = data2[i]
             relativeQuat = targetQuat / referenceQuat
             print(targetQuat)
             print(referenceQuat)
@@ -109,4 +111,4 @@ if __name__ == '__main__':
                 full_data3.append(relativeQuat[2])
                 full_data4.append(relativeQuat[3])
                 time_data.append(time.time())
-                plot_and_log(time_data, full_data1, full_data2, full_data3, full_data4)
+                #plot_and_log(time_data, full_data1, full_data2, full_data3, full_data4)
