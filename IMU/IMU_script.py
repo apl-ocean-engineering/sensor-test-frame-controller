@@ -64,8 +64,8 @@ if __name__ == '__main__':
     print("Started")
     signal.signal(signal.SIGINT, signal_handler)
     #IMUs.append(IMU("COM5", frequency=1000))
-    IMUs.append(IMU("/dev/ttyS1", frequency=100))
-    IMUs.append(IMU("/dev/ttyS4", frequency=100))
+    IMUs.append(IMU("/dev/ttyS1", frequency=10))
+    IMUs.append(IMU("/dev/ttyS4", frequency=10))
     for imu in IMUs:
         Threads.append(threading.Thread(target=imu.start_stream_to_queue, args=(True,)))
     
@@ -90,12 +90,14 @@ if __name__ == '__main__':
         #TODO: not sure how to turn into for loop. or if even necessary
         header1, data1 = IMUs[0].q.get()
         header2, data2 = IMUs[1].q.get()
-        
-        for imu in IMUs: # For when loop is slowed down by anything (like plotting)
-            while imu.q.qsize() > 0:
-                header1, data1 = imu.q.get()
+        print("data1", data1)
+        print("data2", data2)
+        #for imu in IMUs: # For when loop is slowed down by anything (like plotting)
+        #    while imu.q.qsize() > 0:
+        #        header1, data1 = imu.q.get()
 
-        if IMUs[0].q.not_empty:
+
+        if IMUs[0].q.not_empty and IMUs[1].q.not_empty:
             #print("data 1: ", "% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
             print(header1)
             for i in range(4) :
@@ -103,6 +105,7 @@ if __name__ == '__main__':
             for i in range(4) :
                 referenceQuat[i] = data2[i]
             relativeQuat = targetQuat / referenceQuat
+           
             print(targetQuat)
             print(referenceQuat)
             if plotting:

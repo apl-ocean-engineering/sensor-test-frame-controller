@@ -87,7 +87,7 @@ class IMU():
             """
             DO STUFF
             """
-            #print("imu data: ", data)
+            #print(self.port_num, data)
             #print("%f,%d,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
             #print("% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data) )
             self.q.put((header, data))
