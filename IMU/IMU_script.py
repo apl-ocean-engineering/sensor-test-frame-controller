@@ -13,30 +13,33 @@ import sys
 import signal
 import csv
 from pyquaternion import Quaternion
-"""
+
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-"""
+
 timer = time.time()
 
 def signal_handler(sig, frame):
     print("Stopped by Keyboard Interrupt")
     global IMUs
-    for imu in IMUs:
-        imu.stop_streaming()
+    global Threads
+    for i in range(len(IMUs)):
+        IMUs[i].running = False
+        Threads[i].join
+        IMUs[i].stop_streaming()
         print("Streaming stopped and all ports closed")
     sys.exit(0)
     #quit()
     #send_command_bytes_usb(chr(0x56))
 
-"""
+
 def plot_and_log(time_data = [], values1 = [], values2 = [], values3 = [], values4 = []):
     #global timer
     
-    with open("test_data.csv","a") as f:
-            writer = csv.writer(f,delimiter=",")
-            writer.writerow([time.time(),values[0]])
+    # with open("test_data.csv","a") as f:
+    #         writer = csv.writer(f,delimiter=",")
+    #         writer.writerow([time.time(),values[0]])
     
     plt.autoscale()
 
@@ -54,7 +57,7 @@ def plot_and_log(time_data = [], values1 = [], values2 = [], values3 = [], value
         #timer = time.time()
     plt.pause(0.000001)
     plt.cla()
-    """
+    
 # Potential Better way here: https://pythonprogramming.net/python-matplotlib-live-updating-graphs/
 
 IMUs = []
@@ -63,9 +66,9 @@ Threads = []
 if __name__ == '__main__':
     print("Started")
     signal.signal(signal.SIGINT, signal_handler)
-    #IMUs.append(IMU("COM5", frequency=1000))
-    IMUs.append(IMU("/dev/ttyS1", frequency=10))
-    IMUs.append(IMU("/dev/ttyS4", frequency=10))
+    IMUs.append(IMU("COM5", frequency=1000))
+    #IMUs.append(IMU("/dev/ttyS1", frequency=10))
+    #IMUs.append(IMU("/dev/ttyS4", frequency=10))
     for imu in IMUs:
         Threads.append(threading.Thread(target=imu.start_stream_to_queue, args=(True,)))
     
@@ -85,25 +88,27 @@ if __name__ == '__main__':
     full_data4 = []
     time_data = []
 
-
+    #numpy.linalg.norm
     while True:
         #TODO: not sure how to turn into for loop. or if even necessary
-        header1, data1 = IMUs[0].q.get()
-        header2, data2 = IMUs[1].q.get()
-        print("data1", data1)
-        print("data2", data2)
-        #for imu in IMUs: # For when loop is slowed down by anything (like plotting)
-        #    while imu.q.qsize() > 0:
-        #        header1, data1 = imu.q.get()
+        headers = []
+        data = []
+        for i in range(len(IMUs)):
+            headers[i], data[i] = IMUs[i].q.get()
+        
+        print("data1", data[1], " sum: ", np.linalg.norm(data[1]))
+        #print("data2", data[2])
+        for imu in IMUs: # For when loop is slowed down by anything (like plotting)
+            while imu.q.qsize() > 0:
+                header1, data1 = imu.q.get()
 
-
-        if IMUs[0].q.not_empty and IMUs[1].q.not_empty:
+        populated = [imus.q.empty() for imus in IMUs if True]
+        if not all(populated):
             #print("data 1: ", "% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
             print(header1)
             for i in range(4) :
                 targetQuat[i] = data1[i]
-            for i in range(4) :
-                referenceQuat[i] = data2[i]
+                #referenceQuat[i] = data2[i]
             relativeQuat = targetQuat / referenceQuat
            
             print(targetQuat)
@@ -114,4 +119,4 @@ if __name__ == '__main__':
                 full_data3.append(relativeQuat[2])
                 full_data4.append(relativeQuat[3])
                 time_data.append(time.time())
-                #plot_and_log(time_data, full_data1, full_data2, full_data3, full_data4)
+                plot_and_log(time_data, full_data1, full_data2, full_data3, full_data4)

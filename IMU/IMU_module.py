@@ -54,7 +54,6 @@ class IMU():
         data = self.port.read(20)
         #header = self.port.read(7)
         #data = self.port.read(28)
-        #TODO what is this function doing?
         header = struct.unpack(">I", data[0:4])
         data = struct.unpack(">ffff",data[4:20])
         return header, data
@@ -66,10 +65,10 @@ class IMU():
     def start_stream_to_queue(self, with_header=True):
         """
 
-        The start_stream method sends the command that causes the IMU to 
-        start streaming data, and drains any residual bytes in the buffer. It does not handle any configuration of the 
-        stream settings, aside from setting whether or not to include a
-        response header, which is ______. #TODO
+        The start_stream method initiates the IMU's data streaming, drains 
+        any residual bytes in the buffer, then constantly reads the stream 
+        and populates the IMU's queue with the data it reads. This function
+        is run as a seperate thread.
         
 
         Args:
@@ -84,9 +83,6 @@ class IMU():
         while self.running:
             header, data = self.get_IMU_data()
             #timestamp = header[1]
-            """
-            DO STUFF
-            """
             #print(self.port_num, data)
             #print("%f,%d,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
             #print("% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data) )
@@ -135,7 +131,7 @@ class IMU():
 
 
         """
-        self.running = False
+        self.running = False #may be redundant
         self.send_command_bytes_usb(chr(0x56))
         if close_port:
             self.port.close()
@@ -154,7 +150,7 @@ class IMU():
         delayTime = chr(0x0)+chr(0x01)+chr(0x86)+chr(0xA0)
         duration = chr(0xff)+chr(0xff)+chr(0xff)+chr(0xff)
         #TODO: Get this working
-        # freqInterval = hex(1000000.0 / frequency)
+        #freqInterval = hex(1000000.0 / frequency)
         
         freqInterval = chr(0x0)
         if frequency == 1:
