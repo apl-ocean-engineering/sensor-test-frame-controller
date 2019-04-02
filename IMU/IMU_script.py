@@ -99,8 +99,8 @@ if __name__ == '__main__':
             headers.append(entry[0])
             data.append(entry[1:])
         
-        print("data1", data[1], " sum: ", np.linalg.norm(data[1]))
-        #print("data2", data[2])
+        print("data1", data[1], " normal: ", np.linalg.norm(data[1]))
+        print("data1", data[2], " normal: ", np.linalg.norm(data[2]))
         for imu in IMUs: # For when loop is slowed down by anything (like plotting)
             while imu.q.qsize() > 0:
                 header1, data1 = imu.q.get()
