@@ -95,7 +95,9 @@ if __name__ == '__main__':
         headers = []
         data = []
         for i in range(len(IMUs)):
-            headers.append, data.append = IMUs[i].q.get()
+            entry = IMUs[i].q.get()
+            headers.append(entry[0])
+            data.append(entry[1:])
         
         print("data1", data[1], " sum: ", np.linalg.norm(data[1]))
         #print("data2", data[2])
