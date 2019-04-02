@@ -112,8 +112,8 @@ if __name__ == '__main__':
             #print("data 1: ", "% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
             print("printing quaternions")
             for i in range(4) :
-                targetQuat[i] = data[0][i]
-                referenceQuat[i] = data[1][i]
+                targetQuat[i] = data[i][0]
+                referenceQuat[i] = data[i][1]
             relativeQuat = targetQuat / referenceQuat
            
             print(targetQuat)
