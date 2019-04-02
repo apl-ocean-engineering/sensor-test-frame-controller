@@ -36,8 +36,6 @@ def signal_handler(sig, frame):
         t.join()
     print("Streaming stopped and all ports closed")
     sys.exit(0)
-    #quit()
-    #send_command_bytes_usb(chr(0x56))
 
 
 def plot_and_log(time_data = [], values1 = [], values2 = [], values3 = [], values4 = []):
@@ -100,24 +98,26 @@ if __name__ == '__main__':
             headers.append(entry[0])
             data.append(entry[1:])
         
-        print("data1", data[0], " normal: ", np.linalg.norm(data[0]))
-        print("data2", data[1], " normal: ", np.linalg.norm(data[1]))
+        print(IMUs[0].port_name + ": ", data[0], " normal: ", np.linalg.norm(data[0]))
+        print(IMUs[1].port_name + ": ", data[1], " normal: ", np.linalg.norm(data[1]))
 
         for imu in IMUs: # For when loop is slowed down by anything (like plotting)
             while imu.q.qsize() > 0:
                 header1, data1 = imu.q.get()
 
-        populated = [imus.q.empty() for imus in IMUs if True]
-        if not all(populated):
+        empty = [imus.q.empty() for imus in IMUs if True] #array of 1 if queue is empty, and 0 if not
+        print(empty)
+        if not all(empty):
             #print("data 1: ", "% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
-            print(header1)
+            print("printing quaternions")
             for i in range(4) :
-                targetQuat[i] = data1[i]
-                #referenceQuat[i] = data2[i]
+                targetQuat[i] = data[0][i]
+                referenceQuat[i] = data[1][i]
             relativeQuat = targetQuat / referenceQuat
            
             print(targetQuat)
             print(referenceQuat)
+            print(relativeQuat)
             if plotting:
                 full_data1.append(relativeQuat[0])
                 full_data2.append(relativeQuat[1])
