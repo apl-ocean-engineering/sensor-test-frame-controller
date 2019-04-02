@@ -76,10 +76,11 @@ class IMU():
                 stream with a response header. Defaults to True.
 
         """
+        global running
         # Start Streaming
         self.port.reset_input_buffer()
         self.send_IMU_data(chr(0x55))
-        while self.running:
+        while running:
             header, data = self.get_IMU_data()
             #timestamp = header[1]
             #print(self.port_num, data)
@@ -130,7 +131,8 @@ class IMU():
 
 
         """
-        self.running = False #may be redundant
+        global running
+        running = False #may be redundant
         self.send_command_bytes_usb(chr(0x56))
         if close_port:
             self.port.close()
