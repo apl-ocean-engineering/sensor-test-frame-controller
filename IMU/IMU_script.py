@@ -91,7 +91,6 @@ if __name__ == '__main__':
 
     #numpy.linalg.norm
     while True:
-        #TODO: not sure how to turn into for loop. or if even necessary
         headers = []
         data = []
         for i in range(len(IMUs)):

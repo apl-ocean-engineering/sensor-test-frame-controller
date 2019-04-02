@@ -77,19 +77,16 @@ class IMU():
 
         """
         # Start Streaming
-        cont = self.checkRun()
         self.port.reset_input_buffer()
         self.send_IMU_data(chr(0x55))
-        while cont:
+        while self.running:
+            print(self.running)
             header, data = self.get_IMU_data()
             #timestamp = header[1]
             #print(self.port_num, data)
             #print("%f,%d,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
             #print("% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data) )
             self.q.put((header, data))
-
-    def checkRun(self):
-        return self.running
 
     def send_command_bytes_usb(self, data, response_header = False):
         """
