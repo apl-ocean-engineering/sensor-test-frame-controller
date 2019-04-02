@@ -13,7 +13,7 @@ import argparse
 import queue
 
 class IMU():
-    def __init__(self, port_num, frequency=1):
+    def __init__(self, port_name, frequency=1):
         """Example of docstring on the __init__ method.
 
         The __init__ method may be documented in either the class level
@@ -35,8 +35,8 @@ class IMU():
         self.q = queue.Queue()
         self.running = True
 
-        self.port_num = port_num
-        self.port = serial.Serial(port_num, 115200, timeout=1.5)
+        self.port_name = port_name
+        self.port = serial.Serial(port_name, 115200, timeout=1.5)
         '''
         Init Port
         '''
@@ -83,12 +83,12 @@ class IMU():
             try:
                 header, data = self.get_IMU_data()
                 #timestamp = header[1]
-                #print(self.port_num, data)
+                #print(self.port_name, data)
                 #print("%f,%d,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
                 #print("% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data) )
                 self.q.put((header, data))
             except:
-                print("Stopped reading " + self.port_num)
+                print("Stopped reading " + self.port_name)
                 self.running = False
 
     def send_command_bytes_usb(self, data, response_header = False):
