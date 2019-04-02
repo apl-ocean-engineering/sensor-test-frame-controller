@@ -88,7 +88,7 @@ class IMU():
                 #print("% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data) )
                 self.q.put((header, data))
             except:
-                print("Stopped")
+                print("Stopped reading " + self.port_num)
                 self.running = False
 
     def send_command_bytes_usb(self, data, response_header = False):
@@ -134,8 +134,6 @@ class IMU():
 
 
         """
-        self.running = False #may be redundant
-        print("Stopping running for " + self.port_num)
         self.send_command_bytes_usb(chr(0x56))
         if close_port:
             self.port.close()
