@@ -16,9 +16,13 @@ from pyquaternion import Quaternion
 
 # import matplotlib
 # import matplotlib.pyplot as plt
-# import numpy as np
+
+import numpy as np
 
 timer = time.time()
+
+IMUs = []
+Threads = []
 
 def signal_handler(sig, frame):
     print("Stopped by Keyboard Interrupt")
@@ -60,9 +64,6 @@ def plot_and_log(time_data = [], values1 = [], values2 = [], values3 = [], value
     
 # Potential Better way here: https://pythonprogramming.net/python-matplotlib-live-updating-graphs/
 
-IMUs = []
-Threads = []
-
 if __name__ == '__main__':
     print("Started")
     signal.signal(signal.SIGINT, signal_handler)
@@ -94,6 +95,7 @@ if __name__ == '__main__':
         headers = []
         data = []
         for i in range(len(IMUs)):
+            headers.append
             headers[i], data[i] = IMUs[i].q.get()
         
         print("data1", data[1], " sum: ", np.linalg.norm(data[1]))
