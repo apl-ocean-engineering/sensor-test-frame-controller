@@ -79,7 +79,7 @@ class IMU():
         # Start Streaming
         self.port.reset_input_buffer()
         self.send_IMU_data(chr(0x55))
-        while True:
+        while self.running:
             try:
                 header, data = self.get_IMU_data()
                 #timestamp = header[1]
@@ -89,6 +89,7 @@ class IMU():
                 self.q.put((header, data))
             except:
                 print("Stopped")
+                self.running = False
 
     def send_command_bytes_usb(self, data, response_header = False):
         """

@@ -33,6 +33,8 @@ def signal_handler(sig, frame):
         Threads[i].join
         IMUs[i].stop_streaming()
         print("Streaming stopped and all ports closed")
+    for t in Threads:
+        t.join()
     sys.exit(0)
     #quit()
     #send_command_bytes_usb(chr(0x56))
