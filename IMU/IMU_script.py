@@ -14,9 +14,9 @@ import signal
 import csv
 from pyquaternion import Quaternion
 
-import matplotlib
-import matplotlib.pyplot as plt
-import numpy as np
+# import matplotlib
+# import matplotlib.pyplot as plt
+# import numpy as np
 
 timer = time.time()
 
@@ -41,12 +41,12 @@ def plot_and_log(time_data = [], values1 = [], values2 = [], values3 = [], value
     #         writer = csv.writer(f,delimiter=",")
     #         writer.writerow([time.time(),values[0]])
     
-    plt.autoscale()
+    # plt.autoscale()
 
-    plt.scatter(time_data, values1)
-    plt.scatter(time_data, values2)
-    plt.scatter(time_data, values3)
-    plt.scatter(time_data, values4)
+    # plt.scatter(time_data, values1)
+    # plt.scatter(time_data, values2)
+    # plt.scatter(time_data, values3)
+    # plt.scatter(time_data, values4)
     
     if len(values1) > 25:
         values1.pop(0)
@@ -55,8 +55,8 @@ def plot_and_log(time_data = [], values1 = [], values2 = [], values3 = [], value
         values4.pop(0)
         time_data.pop(0)
         #timer = time.time()
-    plt.pause(0.000001)
-    plt.cla()
+    # plt.pause(0.000001)
+    # plt.cla()
     
 # Potential Better way here: https://pythonprogramming.net/python-matplotlib-live-updating-graphs/
 
