@@ -67,9 +67,9 @@ def plot_and_log(time_data = [], values1 = [], values2 = [], values3 = [], value
 if __name__ == '__main__':
     print("Started")
     signal.signal(signal.SIGINT, signal_handler)
-    IMUs.append(IMU("COM5", frequency=1000))
-    #IMUs.append(IMU("/dev/ttyS1", frequency=10))
-    #IMUs.append(IMU("/dev/ttyS4", frequency=10))
+    #IMUs.append(IMU("COM5", frequency=1000))
+    IMUs.append(IMU("/dev/ttyS1", frequency=10))
+    IMUs.append(IMU("/dev/ttyS4", frequency=10))
     for imu in IMUs:
         Threads.append(threading.Thread(target=imu.start_stream_to_queue, args=(True,)))
     
