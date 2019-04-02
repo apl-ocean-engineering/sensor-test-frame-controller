@@ -45,8 +45,8 @@ class IMU():
     
     def _init_port(self, frequency=10):
         self.send_IMU_data(chr(0x56)) # Try to stop the output before doing any configuration
-        #self.send_IMU_data(chr(0xdd)+chr(0x00)+chr(0x00)+chr(0x00)+chr(0x47)) # Set the header to contain the timestamp        
-        self.send_IMU_data(chr(0xdd)+chr(0x0)+chr(0x0)+chr(0)+chr(2))
+        #self.send_IMU_data(chr(0xdd)+chr(0x00)+chr(0x00)+chr(0x00)+chr(0x47)) 
+        self.send_IMU_data(chr(0xdd)+chr(0x0)+chr(0x0)+chr(0)+chr(2)) # Set the header to contain the timestamp        
         self.setStreamTiming(frequency) # Currently only supports 1Hz and 10Hz
         self.setStreamSlots() # Set the streaming slots to stream the tared quaternion
 
@@ -77,9 +77,8 @@ class IMU():
 
         """
         # Start Streaming
-        self.send_command_bytes_usb(chr(0x55), response_header=with_header)
-        # Drain any residual bytes
         self.port.reset_input_buffer()
+        self.send_IMU_data(chr(0x55))
         while self.running:
             header, data = self.get_IMU_data()
             #timestamp = header[1]
