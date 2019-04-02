@@ -101,9 +101,9 @@ if __name__ == '__main__':
         print(IMUs[0].port_name + ": ", data[0], " normal: ", np.linalg.norm(data[0]))
         print(IMUs[1].port_name + ": ", data[1], " normal: ", np.linalg.norm(data[1]))
 
-        for imu in IMUs: # For when loop is slowed down by anything (like plotting)
-            while imu.q.qsize() > 0:
-                header1, data1 = imu.q.get()
+        for i in range(len(IMUs)): # For when loop is slowed down by anything (like plotting)
+            while IMUs[i].q.qsize() > 0:
+                headers[i], data[i] = imu.q.get()
 
         empty = [imus.q.empty() for imus in IMUs if True] #array of 1 if queue is empty, and 0 if not
         #print(empty)
@@ -112,8 +112,8 @@ if __name__ == '__main__':
             #print("data 1: ", "% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
             print("printing quaternions")
             for i in range(4) :
-                targetQuat[i] = data[i][0]
-                referenceQuat[i] = data[i][1]
+                targetQuat[i] = data[0][0][i]
+                referenceQuat[i] = data[1][0][i]
             relativeQuat = targetQuat / referenceQuat
            
             print(targetQuat)
