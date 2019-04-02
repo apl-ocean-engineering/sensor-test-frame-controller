@@ -101,10 +101,6 @@ if __name__ == '__main__':
         print(IMUs[0].port_name + ": ", data[0], " normal: ", np.linalg.norm(data[0]))
         print(IMUs[1].port_name + ": ", data[1], " normal: ", np.linalg.norm(data[1]))
 
-        for imu in IMUs: # For when loop is slowed down by anything (like plotting)
-            while imu.q.qsize() > 0:
-                header1, data1 = imu.q.get()
-
         empty = [imus.q.empty() for imus in IMUs if True] #array of 1 if queue is empty, and 0 if not
         print(empty)
         if not all(empty):
@@ -125,3 +121,7 @@ if __name__ == '__main__':
                 full_data4.append(relativeQuat[3])
                 time_data.append(time.time())
                 plot_and_log(time_data, full_data1, full_data2, full_data3, full_data4)
+
+        for imu in IMUs: # For when loop is slowed down by anything (like plotting)
+            while imu.q.qsize() > 0:
+                header1, data1 = imu.q.get()
