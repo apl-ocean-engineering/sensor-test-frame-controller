@@ -96,7 +96,7 @@ if __name__ == '__main__':
         for i in range(len(IMUs)):
             entry = IMUs[i].q.get()
             headers.append(entry[0])
-            data.append(entry[1:])
+            data.append(entry[1])
         
         print(IMUs[0].port_name + ": ", data[0], " normal: ", np.linalg.norm(data[0]))
         print(IMUs[1].port_name + ": ", data[1], " normal: ", np.linalg.norm(data[1]))
