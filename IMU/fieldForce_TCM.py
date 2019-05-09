@@ -418,14 +418,9 @@ class FieldforceTCM:
         return self.Datum(**data)        
         
         
-def start_IMU(IMU):
+def run(IMU):
     IMU.stopAll()
-    
-    IMU.startStreaming()
-
-if __name__ == '__main__':
-    IMU = FieldforceTCM("/dev/ttyUSB0", 38400)
-    start_IMU(IMU)
+    IMU.startStreaming() 
     while True:
         datum = IMU.getData(2)
         ax = math.radians(datum.RAngle)
@@ -433,6 +428,11 @@ if __name__ == '__main__':
         az = -math.radians(datum.Heading)
         
         print(ax, ay, az)
+
+if __name__ == '__main__':
+    IMU = FieldforceTCM("/dev/ttyUSB0", 38400) #port, baud rate
+    run(IMU)
+
     
     
     
