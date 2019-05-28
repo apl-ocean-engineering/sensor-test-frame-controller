@@ -5,7 +5,7 @@ Created on Tue Jan  8 10:42:15 2019
 
 @author: mitchell & stefan
 """
-from IMU_module import IMU
+from yost_module import Yost
 import queue
 import threading
 import time
@@ -67,9 +67,7 @@ def plot_and_log(time_data = [], values1 = [], values2 = [], values3 = [], value
 if __name__ == '__main__':
     print("Started")
     signal.signal(signal.SIGINT, signal_handler)
-    #IMUs.append(IMU("COM5", frequency=1000))
-    IMUs.append(IMU("/dev/ttyS1", frequency=10))
-    IMUs.append(IMU("/dev/ttyS4", frequency=10))
+    IMUs.append(Yost("COM5", frequency=1000))
     for imu in IMUs:
         Threads.append(threading.Thread(target=imu.start_stream_to_queue, args=(True,)))
     
@@ -99,11 +97,10 @@ if __name__ == '__main__':
             data.append(entry[1])
         
         print(IMUs[0].port_name + ": ", data[0], " normal: ", np.linalg.norm(data[0]))
-        print(IMUs[1].port_name + ": ", data[1], " normal: ", np.linalg.norm(data[1]))
 
         for i in range(len(IMUs)): # For when loop is slowed down by anything (like plotting)
             while IMUs[i].q.qsize() > 0:
-                headers[i], data[i] = imu.q.get()
+                headers[i], data[i] = IMUs[i].q.get()
 
         empty = [imus.q.empty() for imus in IMUs if True] #array of 1 if queue is empty, and 0 if not
         #print(empty)
