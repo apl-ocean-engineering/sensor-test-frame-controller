@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 import serial
 import struct
 import sys
@@ -28,7 +28,12 @@ class VectorNav():
         datum = str(datum[7:]).strip('\r\n')
         datum = datum.split(',')
         datum = datum[:-1]
-        return [float(i) for i in datum]
+        try :
+            return [float(i) for i in datum]
+        except:
+            print("read error")
+            return None
+
 
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal_handler)

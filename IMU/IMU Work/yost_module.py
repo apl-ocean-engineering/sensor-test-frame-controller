@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
 Created on Tue Jan  8 10:41:48 2019
@@ -10,7 +10,7 @@ import struct
 import io
 import time
 import argparse
-import queue
+import Queue
 
 class Yost():
     def __init__(self, port_name, frequency=1):
@@ -32,7 +32,7 @@ class Yost():
             param3 (:obj:`list` of :obj:`str`): Description of `param3`.
 
         """
-        self.q = queue.Queue()
+        self.q = Queue.Queue()
         self.running = True
 
         self.port_name = port_name
@@ -86,7 +86,7 @@ class Yost():
                 #print(self.port_name, data)
                 #print("%f,%d,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
                 #print("% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data) )
-                self.q.put((header, data))
+                self.q.put((header + data))
             except:
                 print("Stopped reading " + self.port_name)
                 self.running = False
@@ -120,7 +120,7 @@ class Yost():
             packet = chr(0xf9)
 
         packet += data+chr(checksum % 256)
-        self.port.write(packet.encode('latin-1'))
+        self.port.write(packet)#.encode('latin-1'))
 
     def stop_streaming(self, close_port=False):
         """
