@@ -6,7 +6,6 @@ from yost_module import Yost
 
 import datetime
 import math
-import threading
 import csv
 import time
 
@@ -40,8 +39,7 @@ def runIMUs(TCM=None, VNav=None, Yost=None):
         print("VectorNav Initialized")
     
     if Yost != None:
-        t = threading.Thread(target=Yost.start_stream_to_queue, args=(True,))
-        t.start()
+        Yost.start()
         write_csv(yost_file, ["Time", "quat 1", "quat 2", "quat 3", "quat 4"])
         print("YostLabs Initialized")
 
@@ -64,7 +62,7 @@ def runIMUs(TCM=None, VNav=None, Yost=None):
             data.insert(0,time.time()-init_time)
             if len(data) != 13:
                 print(data)
-            print("Vnav: " + str(data))
+            print("VNav: " + str(data))
             write_csv(vnav_file, data)
                 
         
@@ -72,8 +70,8 @@ def runIMUs(TCM=None, VNav=None, Yost=None):
             data = list(Yost.q.get())
             while Yost.q.qsize() > 0:
                 data = list(Yost.q.get())
-            # data.insert(0,time.time()-init_time)
-            data[0] = (time.time() - init_time) # Replacing yost timestamp instead of pre-pending
+            data.insert(0,time.time()-init_time)
+            # data[0] = (time.time() - init_time) # Replacing yost timestamp instead of pre-pending
             write_csv(yost_file, data)
             print("Yost: " + str(data))
 
@@ -82,4 +80,4 @@ if __name__ == '__main__':
     imu2 = VectorNav("COM22") #port
     imu3 = Yost("COM5", frequency=1000) #port, frequency
     runIMUs(TCM=imu1, VNav=imu2, Yost=imu3)
-    # runIMUs(VNav=imu2)
+    # runIMUs(Yost=imu3)

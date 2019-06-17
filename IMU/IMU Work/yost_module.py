@@ -11,6 +11,7 @@ import io
 import time
 import argparse
 import Queue
+import threading
 
 class Yost():
     def __init__(self, port_name, frequency=1):
@@ -51,17 +52,21 @@ class Yost():
         self.setStreamSlots() # Set the streaming slots to stream the tared quaternion
 
     def get_IMU_data(self):
-        data = self.port.read(20)
+        data = self.port.read(16)
         #header = self.port.read(7)
         #data = self.port.read(28)
-        header = struct.unpack(">I", data[0:4])
-        data = struct.unpack(">ffff",data[4:20])
-        return header, data
+        # header = struct.unpack(">I", data[0:4])
+        data = struct.unpack(">ffff",data[0:16])
+        return data
         
     def send_IMU_data(self, cmd):
         self.send_command_bytes_usb(cmd)
         self.port.read(4)
     
+    def start(self):
+        t = threading.Thread(target=self.start_stream_to_queue, args=(True,))
+        t.start()
+
     def start_stream_to_queue(self, with_header=True):
         """
 
@@ -81,14 +86,15 @@ class Yost():
         self.send_IMU_data(chr(0x55))
         while self.running:
             try:
-                header, data = self.get_IMU_data()
+                data = self.get_IMU_data()
                 #timestamp = header[1]
                 #print(self.port_name, data)
                 #print("%f,%d,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data1) )
                 #print("% 9f,% 9f,% 9f,% 9f,% 9f,% 9f,% 9f" % tuple(data) )
-                self.q.put((header + data))
-            except:
+                self.q.put(data)
+            except Exception as e:
                 print("Stopped reading " + self.port_name)
+                print(e)
                 self.running = False
 
     def send_command_bytes_usb(self, data, response_header = False):
