@@ -423,6 +423,7 @@ def run(IMU):
     IMU.startStreaming() 
     while True:
         datum = IMU.getData(2)
+        print(datum)
         ax = math.radians(datum.RAngle)
         ay = math.radians(datum.PAngle)
         az = -math.radians(datum.Heading)
@@ -430,5 +431,6 @@ def run(IMU):
         print(ax, ay, az)
 
 if __name__ == '__main__':
-    IMU = FieldforceTCM("/dev/ttyUSB0", 38400) #port, baud rate
+    # IMU = FieldforceTCM("/dev/ttyUSB0", 38400) #port, baud rate
+    IMU = FieldforceTCM("COM23", 38400) #port, baud rate
     run(IMU)
