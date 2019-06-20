@@ -8,6 +8,17 @@ import datetime
 import math
 import csv
 import time
+'''
+Orientation Conventions
+
+Euler angles/(Roll-Pitch-Yaw):
+    X-axis is positive forward, through the nose of the aircraft
+    Y-axis is positive out the right wing
+    Z-axis is positive down (so that right hand rule is obeyed)
+    Rotation is clockwise, obeying right hand rule with thumb being positive direction
+    Sequence of operations: ZYX or yaw-pitch-roll
+'''
+
 
 write = True # For debug purposes
 directory = "data/"
