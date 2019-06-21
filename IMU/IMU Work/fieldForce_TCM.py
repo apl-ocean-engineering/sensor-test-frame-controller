@@ -79,6 +79,50 @@ class TimeoutException(Exception):
     def __init__(self, msg, time=None):
         Exception.__init__(self, msg)
         self.time=time
+        
+class Orientation:
+    STD_0      = 1
+    X_UP_0     = 2
+    Y_UP_0     = 3
+    STD_90     = 4
+    STD_180    = 5
+    STD_270    = 6
+    Z_DOWN_0   = 7
+    X_UP_90    = 8
+    X_UP_180   = 9
+    X_UP_270   = 10
+    Y_UP_90    = 11
+    Y_UP_180   = 12
+    Y_UP_270   = 13
+    Z_DOWN_90  = 14
+    Z_DOWN_180 = 15
+    Z_DOWN_270 = 16       
+
+class Component:
+    kHeading     = 5
+    kTemperature = 7
+    kDistortion  = 8
+    kCalStatus   = 9
+    kPAligned    = 21
+    kRAligned    = 22
+    kIZAligned   = 23
+    kPAngle      = 24
+    kRAngle      = 25
+    kXAligned    = 27
+    kYAligned = 28        
+
+class Configuration:
+    kDeclination         = 1
+    kTrueNorth           = 2
+    kBigEndian           = 6
+    kMountingRef         = 10
+    kUserCalNumPoints    = 12
+    kUserCalAutoSampling = 13
+    kBaudRate            = 14
+    kMilOutput           = 15
+    kDataCal             = 16
+    kCoeffCopySet        = 18
+    kAccelCoeffCopySet = 19        
 
 class FrameID:
     kGetModInfo         = 1
@@ -163,7 +207,56 @@ class FieldforceTCM:
         27: Component('XAligned',    _struct_float32),
         28: Component('YAligned',    _struct_float32),
         29: Component('ZAligned',    _struct_float32)
-        }    
+        }   
+    
+    config = {
+        1:  Component('Declination',         _struct_float32),
+        2:  Component('TrueNorth',           _struct_boolean),
+        6:  Component('BigEndian',           _struct_boolean),
+        10: Component('MountingRef',         _struct_uint8),
+        12: Component('UserCalNumPoints',    _struct_uint32),
+        13: Component('UserCalAutoSampling', _struct_boolean),
+        14: Component('BaudRate',            _struct_uint8),
+        15: Component('MilOutput',           _struct_boolean),
+        16: Component('DataCal',             _struct_boolean),
+        18: Component('CoeffCopySet',        _struct_uint32),
+        19: Component('AccelCoeffCopySet',   _struct_uint32)
+    }
+    
+    fir_defaults = {
+        0:  [ ],
+        4:  [ 4.6708657655334e-2, 4.5329134234467e-1,
+              4.5329134234467e-1, 4.6708657655334e-2 ],
+        8:  [ 1.9875512449729e-2, 6.4500864832660e-2,
+              1.6637325898141e-1, 2.4925036373620e-1,
+              2.4925036373620e-1, 1.6637325898141e-1,
+              6.4500864832660e-2, 1.9875512449729e-2 ],
+        16: [ 7.9724971069144e-3, 1.2710056429342e-2,
+              2.5971390034516e-2, 4.6451949792704e-2,
+              7.1024151197772e-2, 9.5354386848804e-2,
+              1.1484431942626e-1, 1.2567124916369e-1,
+              1.2567124916369e-1, 1.1484431942626e-1,
+              9.5354386848804e-2, 7.1024151197772e-2,
+              4.6451949792704e-2, 2.5971390034516e-2,
+              1.2710056429342e-2, 7.9724971069144e-3 ],
+        32: [ 1.4823725958818e-3, 2.0737124095482e-3,
+              3.2757326624196e-3, 5.3097803863757e-3,
+              8.3414139286254e-3, 1.2456836057785e-2,
+              1.7646051430536e-2, 2.3794805168613e-2,
+              3.0686505921968e-2, 3.8014333463472e-2,
+              4.5402682509802e-2, 5.2436112653103e-2,
+              5.8693165018301e-2, 6.3781858267530e-2,
+              6.7373451424187e-2, 6.9231186101853e-2,
+              6.9231186101853e-2, 6.7373451424187e-2,
+              6.3781858267530e-2, 5.8693165018301e-2,
+              5.2436112653103e-2, 4.5402682509802e-2,
+              3.8014333463472e-2, 3.0686505921968e-2,
+              2.3794805168613e-2, 1.7646051430536e-2,
+              1.2456836057785e-2, 8.3414139286254e-3,
+              5.3097803863757e-3, 3.2757326624196e-3,
+              2.0737124095482e-3, 1.4823725958818e-3 ]
+    }
+
     
     
     def __init__(self, path, baud):
@@ -278,8 +371,49 @@ class FieldforceTCM:
             offset     += 1 + component.struct.size
             comp_index += 1
 
-        return self._createDatum(data)  
+        return self._createDatum(data) 
     
+    
+    def setConfig(self, config_id, value):
+        """
+        Sets a single configuration value based on the config_id, which must be
+        one of the values in Configuration. Acceptable values deend upon the
+        configuration option being set.
+        """
+        payload_id    = _struct_uint8.pack(config_id)
+        payload_value = self.config[config_id].struct.pack(value)
+
+        self._send_msg_w_resp(FrameID.kSetConfig, payload_id + payload_value, FrameID.kSetConfigDone)
+        
+    def setFilter(self, count, values=None):
+        """
+        Configure the number of taps and weights of the on-board finite impulse
+        response (FIR) filter. The number of taps must be zero (i.e. disabled),
+        4, 8, 16, or 32. If values is omitted or is set to None, the weights
+        default to PNI's recommended values. See the Fieldforce TCM User Manual
+        for details.
+        """
+        assert count in [ 0, 4, 8, 16, 32 ]
+
+        if values == None:
+            values = self.fir_defaults[count]
+        else:
+            assert len(values) == count
+
+        payload = struct.pack('>BBB{0}d'.format(count), 3, 1, count, *values)
+        self._send_msg_w_resp(FrameID.kSetParam, payload, FrameID.kSetParamDone)        
+
+    def setDataComponents(self, components):
+        """
+        Specify which data components, specified as a list of component IDs,
+        will be returned with each sample. An arbitrary number of IDs is
+        supported.
+        """
+        count = len(components)
+        payload_counts  = struct.pack('>B', count)
+        payload_content = struct.pack('>{0}B'.format(count), *components)
+        payload = payload_counts + payload_content
+        self._sendMessage(FrameID.kSetDataComponents, payload)    
  
     def _wait_and_read_all(self):
         s = self.fp
@@ -378,6 +512,12 @@ class FieldforceTCM:
         self.discard_stat += discard_amt
 
         return rdy_pkts
+    
+    def _send_msg_w_resp(self, send_frame_id, payload, recv_frame_id, timeout=_DEFAULT_TIMEOUT):
+        """ Send a full message (with payload) and wait for a responce """
+        w = self._recv_msg_prep(self, recv_frame_id)
+        self._sendMessage(send_frame_id, payload)
+        return self._recv_msg_wait(w, timeout=timeout)
 
 
     def _recvSpecificMessage(self, *expected_frame_id, **only_timeout):
@@ -417,11 +557,40 @@ class FieldforceTCM:
                 data[component] = None
         return self.Datum(**data)        
         
+
+def start_compass(IMU):
+    try:
+        IMU.stopAll()
+            
+        IMU.setFilter(0)
+        IMU.setConfig(Configuration.kMountingRef, Orientation.Y_UP_180)
+        IMU.setConfig(Configuration.kDeclination, 0)
+        
+        IMU.setConfig(Configuration.kCoeffCopySet, 0)
+        IMU.setConfig(Configuration.kAccelCoeffCopySet, 0)
+        
+        IMU.setDataComponents([
+           Component.kHeading,
+           Component.kPAngle,
+           Component.kRAngle,
+           Component.kDistortion,
+           Component.kCalStatus
+         ])      
+            
+            
+            
+        IMU.startStreaming() 
+    except TimeoutException as e:
+        print('Compass restart attempt timed out.')
+        return False
+    return True        
         
 def run(IMU):
-    IMU.stopAll()
-    IMU.startStreaming() 
+    start = start_compass(IMU)
     while True:
+        if not start:
+            start = start_compass(IMU)
+            continue
         datum = IMU.getData(2)
         print(datum)
         ax = math.radians(datum.RAngle)
@@ -431,6 +600,6 @@ def run(IMU):
         print(ax, ay, az)
 
 if __name__ == '__main__':
-    # IMU = FieldforceTCM("/dev/ttyUSB0", 38400) #port, baud rate
-    IMU = FieldforceTCM("COM23", 38400) #port, baud rate
+    IMU = FieldforceTCM("/dev/ttyUSB0", 38400) #port, baud rate
+    #IMU = FieldforceTCM("COM23", 38400) #port, baud rate
     run(IMU)
