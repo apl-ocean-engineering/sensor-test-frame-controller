@@ -600,6 +600,6 @@ def run(IMU):
         print(ax, ay, az)
 
 if __name__ == '__main__':
-    IMU = FieldforceTCM("/dev/ttyUSB0", 38400) #port, baud rate
-    #IMU = FieldforceTCM("COM23", 38400) #port, baud rate
+    #IMU = FieldforceTCM("/dev/ttyUSB0", 38400) #port, baud rate
+    IMU = FieldforceTCM("COM23", 38400) #port, baud rate
     run(IMU)
