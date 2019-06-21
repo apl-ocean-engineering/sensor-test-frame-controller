@@ -3,6 +3,8 @@
 from fieldForce_TCM import FieldforceTCM
 from vectorNav import VectorNav
 from yost_module import Yost
+# from pyquaternion import Quaternion as quat
+# from scipy.spatial.transform import Rotation as R
 
 import datetime
 import math
@@ -35,6 +37,16 @@ def write_csv(filename, data):
             writer = csv.writer(csvfile, delimiter=',')
             writer.writerow(data)
 
+# # Returns Euler Angles in list form
+# def quat2euler( q ):
+#     rot = R.from_quat(q.elements)
+#     e = rot.as_euler('zyx')
+#     return [e[0], e[1], e[2]]
+
+# # Returns quat object from euler list
+# def euler2quat( e, order='zyx' ):
+#     rot = R.from_euler( order, [e[0], e[1], e[2]])
+#     return quat(rot.as_quat())
 
 def runIMUs(TCM=None, VNav=None, Yost=None):
     if TCM != None:
